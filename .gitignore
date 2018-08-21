@@ -1,4 +1,9 @@
 /.ipynb_checkpoints/
-/darknet/
 /data/
 /.idea/
+.DS_Store*
+
+
+/darknet/obj
+/darknet/weights
+/darknet/data
