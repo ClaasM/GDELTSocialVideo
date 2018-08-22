@@ -8,6 +8,13 @@ import random
 import os
 
 
+# By the time a program such as Python is running, the dynamic loader (ld.so.1 or something similar) has already read LD_LIBRARY_PATH and won't notice any changes
+# (See https://stackoverflow.com/questions/856116/changing-ld-library-path-at-runtime-for-ctypes)
+
+print(os.environ['DYLD_LIBRARY_PATH'])
+#print(os.environ['TEST'])
+
+
 def sample(probs):
     s = sum(probs)
     probs = [a / s for a in probs]
@@ -53,7 +60,7 @@ class METADATA(Structure):
                 ("names", POINTER(c_char_p))]
 
 
-lib = CDLL("darknet/libdarknet.so", RTLD_GLOBAL)
+lib = CDLL("libdarknet_gpu.so", RTLD_GLOBAL)
 lib.network_width.argtypes = [c_void_p]
 lib.network_width.restype = c_int
 lib.network_height.argtypes = [c_void_p]

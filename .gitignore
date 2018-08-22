@@ -4,6 +4,4 @@
 .DS_Store*
 
 
-/darknet/obj
-/darknet/weights
-/darknet/data
+/darknet
