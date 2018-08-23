@@ -3,3 +3,5 @@ Cython
 sklearn
 Pillow
 matplotlib
+google-api-python-client
+pandas
