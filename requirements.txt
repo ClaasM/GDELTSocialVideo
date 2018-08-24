@@ -9,3 +9,5 @@ beautifulsoup4
 requests
 lxml
 xlrd
+html2text
+nltk
