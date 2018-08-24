@@ -5,3 +5,7 @@ Pillow
 matplotlib
 google-api-python-client
 pandas
+beautifulsoup4
+requests
+lxml
+xlrd
