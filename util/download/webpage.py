@@ -1,30 +1,14 @@
-import os
-import pickle
-import re
-import time
-import urllib
-from gzip import GzipFile
-from multiprocessing.dummy import Pool  # use threads for I/O bound tasks
+from multiprocessing.pool import Pool
 
-import nltk
-import pandas as pd
-from bs4 import BeautifulSoup
+pool = Pool(10)
 
-data_count = 5000
-count = 0
-current_time = time.time()
-article_path = "data/GDELT_VGKG/preprocessed/articles_raw/%d/" % current_time
-image_path = "data/GDELT_VGKG/preprocessed/images/%d/" % current_time
-
-print(image_path)
-print(article_path)
-
-with GzipFile('data/GDELT_VGKG/vgkg-20160427-part1.csv.gz') as gzipfile:
-    df = pd.read_csv(gzipfile, nrows=data_count)
-
-    os.makedirs(article_path)
-    os.makedirs(image_path)
-
+def download_and_save(id, url):
+    """
+    Queues an image for download if it does not exist
+    :param id: Name of the file
+    :param url: URL of the image
+    :return:
+    """
 
     def fetch_url(row):
         index, article = row
@@ -67,4 +51,6 @@ with GzipFile('data/GDELT_VGKG/vgkg-20160427-part1.csv.gz') as gzipfile:
             print(e, article.DocumentIdentifier)
 
 
-    Pool(100).map(fetch_url, df.iterrows())
+    .map(fetch_url, df.iterrows())
+
+    return
