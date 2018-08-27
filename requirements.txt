@@ -11,3 +11,10 @@ lxml
 xlrd
 html2text
 nltk
+tensorflow==1.4.0
+scipy
+scikit-image
+keras==2.0.8
+imgaug
+opencv-python
+pycocotools
