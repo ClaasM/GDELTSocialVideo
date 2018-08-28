@@ -1,5 +1,7 @@
 import gzip
 import pickle
+import os
+
 
 def to_plaintext(path, destination):
     """
@@ -14,6 +16,7 @@ def to_plaintext(path, destination):
             outfile.write(doc)
             outfile.close()
 
+
 def load_gzip_pickle(path):
     """
     Loads a gzipped pickle
@@ -23,6 +26,7 @@ def load_gzip_pickle(path):
     with gzip.open(path, "rb") as infile:
         return pickle.load(infile)
 
+
 def save_gzip_pickle(path, object):
     """
     Saves python object as a gzipped pickle
@@ -31,3 +35,8 @@ def save_gzip_pickle(path, object):
     """
     with gzip.open(path, "wb+") as file:
         pickle.dump(object, file)
+
+#data_path = "../data"
+#file = 1078
+#to_plaintext(data_path + ("/raw/articles/%d" % file),
+#             data_path + ("/interim/unzipped/%d.html" % file))

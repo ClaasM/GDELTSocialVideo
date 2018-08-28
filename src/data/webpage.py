@@ -147,6 +147,7 @@ sentence_upper_limit = 200
 def save_if_passes_filter(file):
     """
     Loads the file and checks if it passes the filter. If so, its saved to the 'processed' directory
+    TODO maybe add check for casing?
     :param file:
     :return:
     """
@@ -162,3 +163,5 @@ def save_if_passes_filter(file):
         return False
     except Exception as e:
         return str(e)
+
+
