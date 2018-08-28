@@ -8,4 +8,6 @@ def download_and_save(id, url):
     :return:
     """
 
+    urllib.request.urlretrieve(article.ImageURL, "%s/%s" % (image_path, article.DATE))
+
     return

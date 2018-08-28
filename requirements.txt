@@ -19,3 +19,5 @@ imgaug
 opencv-python
 pycocotools
 langdetect
+gevent
+html5lib
