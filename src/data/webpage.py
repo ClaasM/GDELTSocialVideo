@@ -1,12 +1,12 @@
 import gzip
-import urllib
-import pickle
 import os
-import re
-import nltk
+import pickle
+import urllib
+
 from bs4 import BeautifulSoup
 from langdetect import detect
-from util.HTML_sentence_tokenizer import HTMLSentenceTokenizer
+
+from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
 
 path = "data/GDELT_VGKG/articles"
 raw_path = path + "/raw"
@@ -39,9 +39,6 @@ def download_and_save(row):
             return str(e)
 
 
-
-
-
 def extract_sentences_and_save(file):
     """
     Removes anything unnecessary from an HTML Document. Keeps an array of sentences.
@@ -53,7 +50,6 @@ def extract_sentences_and_save(file):
     try:
         with gzip.open(file, "rb") as file:
             doc = pickle.load(file)
-
 
         bs_doc = BeautifulSoup(doc, features="lxml")
 
@@ -81,17 +77,18 @@ def tokenize_and_save():
     """
     pass
     # Keep only the remaining text (removing all tags etc.)
-    #text = bs_doc.get_text()  # re.sub('<[^<]+?>', '', str(doc))[:100]
+    # text = bs_doc.get_text()  # re.sub('<[^<]+?>', '', str(doc))[:100]
 
     # Tokenize the text
-    #tokens = nltk.word_tokenize(text)
+    # tokens = nltk.word_tokenize(text)
 
     # Keep only tokens that are words and more than a letter
-    #alpha_tokens = [token for token in tokens if token.isalpha() and len(token) > 1]
+    # alpha_tokens = [token for token in tokens if token.isalpha() and len(token) > 1]
 
     # Keep only tokens that are either all caps or no caps or start with a capital letter
-    #pattern = re.compile("(^[A-Z]?[a-z]+$)|(^[A-Z]+$)")
-    #word_tokens = [token for token in alpha_tokens if pattern.match(token)]
+    # pattern = re.compile("(^[A-Z]?[a-z]+$)|(^[A-Z]+$)")
+    # word_tokens = [token for token in alpha_tokens if pattern.match(token)]
+
 
 def save_if_english(file):
     """
@@ -101,11 +98,11 @@ def save_if_english(file):
     filename = file.split("/")[-1]
     try:
         with gzip.open(file, "rb") as file:
-            doc = ' '.join(pickle.load(file))
-        language = detect(doc)
+            sentences_array = pickle.load(file)
+        language = detect(' '.join(sentences_array))
         if language == 'en':
             with gzip.open("%s/%s" % (sentences_english_path, filename), "wb+") as file:
-                pickle.dump(doc, file)
+                pickle.dump(sentences_array, file)
         return language
     except Exception as e:
         return str(e)
