@@ -1,18 +1,20 @@
-import gzip
+import csv
 import os
-import pickle
 import urllib
-
+import gzip
+import re
+import nltk
 from bs4 import BeautifulSoup
 from langdetect import detect
 
 from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
+from src import util
 
-path = "data/GDELT_VGKG/articles"
-raw_path = path + "/raw"
-sentences_path = path + "/sentences"
-sentences_english_path = path + "/sentences_english"
-tokenized_path = path + "/tokens"
+raw_path = os.environ["DATA_PATH"] + "/raw/articles/"
+sentences_path = os.environ["DATA_PATH"] + "/interim/sentences/"
+sentences_english_path = os.environ["DATA_PATH"] + "/interim/sentences_english/"
+tokens_path = os.environ["DATA_PATH"] + "/processed/tokens/"
+processed_path = os.environ["DATA_PATH"] + "/processed/sentences/"
 
 
 def download_and_save(row):
@@ -23,17 +25,15 @@ def download_and_save(row):
     :return:
     """
     index, (date, document_identifier, image_URL, raw_JSON) = row
-    article_path = raw_path + "/" + str(date)
+    article_path = raw_path + "/" + str(index)
     if os.path.isfile(article_path):
         return "Already exists"
     else:
         try:
-            # Download document
+            # Download and save document
             req = urllib.request.Request(document_identifier, headers={'User-Agent': 'Mozilla'})
             doc = urllib.request.urlopen(req, timeout=5).read()
-
-            with gzip.open(article_path, "wb+") as file:
-                pickle.dump(doc, file)
+            util.save_gzip_pickle(article_path, doc)
             return "Success"
         except Exception as e:
             return str(e)
@@ -48,8 +48,7 @@ def extract_sentences_and_save(file):
     filename = file.split('/')[-1]
 
     try:
-        with gzip.open(file, "rb") as file:
-            doc = pickle.load(file)
+        doc = util.load_gzip_pickle(file)
 
         bs_doc = BeautifulSoup(doc, features="lxml")
 
@@ -63,31 +62,40 @@ def extract_sentences_and_save(file):
         sentences = HTMLSentenceTokenizer().feed(str(bs_doc))
 
         # Done preprocessing. Save tokens
-        with gzip.open("%s/%s" % (sentences_path, filename), "wb+") as file:
-            pickle.dump(sentences, file)
+        util.save_gzip_pickle("%s/%s" % (sentences_path, filename), sentences)
         return "Success"
     except Exception as e:
         return str(e)
 
 
-def tokenize_and_save():
+def tokenize_and_save(file):
     """
     TODO
     :return:
     """
-    pass
-    # Keep only the remaining text (removing all tags etc.)
-    # text = bs_doc.get_text()  # re.sub('<[^<]+?>', '', str(doc))[:100]
+    filename = file.split('/')[-1]
 
-    # Tokenize the text
-    # tokens = nltk.word_tokenize(text)
+    try:
+        sentences = util.load_gzip_pickle(file)
 
-    # Keep only tokens that are words and more than a letter
-    # alpha_tokens = [token for token in tokens if token.isalpha() and len(token) > 1]
+        text = ' '.join(sentences)
 
-    # Keep only tokens that are either all caps or no caps or start with a capital letter
-    # pattern = re.compile("(^[A-Z]?[a-z]+$)|(^[A-Z]+$)")
-    # word_tokens = [token for token in alpha_tokens if pattern.match(token)]
+        # Tokenize the text
+        tokens = nltk.word_tokenize(text)
+
+        # Keep only tokens that are words and more than a letter
+        alpha_tokens = [token for token in tokens if token.isalpha() and len(token) > 1]
+
+        # Keep only tokens that are either all caps or no caps or start with a capital letter
+        pattern = re.compile("(^[A-Z]?[a-z]+$)|(^[A-Z]+$)")
+        word_tokens = [token for token in alpha_tokens if pattern.match(token)]
+
+        # Done preprocessing. Save tokens
+        util.save_gzip_pickle("%s/%s" % (tokens_path, filename), word_tokens)
+
+        return "Success"
+    except Exception as e:
+        return str(e)
 
 
 def save_if_english(file):
@@ -97,12 +105,60 @@ def save_if_english(file):
     """
     filename = file.split("/")[-1]
     try:
-        with gzip.open(file, "rb") as file:
-            sentences_array = pickle.load(file)
+        sentences_array = util.load_gzip_pickle(file)
         language = detect(' '.join(sentences_array))
         if language == 'en':
-            with gzip.open("%s/%s" % (sentences_english_path, filename), "wb+") as file:
-                pickle.dump(sentences_array, file)
+            util.save_gzip_pickle("%s/%s" % (sentences_english_path, filename), sentences_array)
         return language
+    except Exception as e:
+        return str(e)
+
+
+def get_row_by_date(date):
+    with gzip.open(os.environ["DATA_PATH"] + '/external/vgkg-20160427-part1.csv.gz', "rt") as gzipfile:
+        reader = csv.reader(gzipfile)
+        DATE = None
+        index = -1
+        while DATE != str(date):
+            index += 1
+            (DATE, DocumentIdentifier, ImageURL, RawJSON) = next(reader)
+        return index, (DATE, DocumentIdentifier, ImageURL, RawJSON)
+
+
+def get_row_by_index(index):
+    index = int(index)
+    with gzip.open(os.environ["DATA_PATH"] + '/external/vgkg-20160427-part1.csv.gz', "rt") as gzipfile:
+        reader = csv.reader(gzipfile)
+        next(reader)  # Skip headers
+        row = next(reader)
+        curr_index = 0
+        while curr_index != index:
+            curr_index += 1
+            row = next(reader)
+        return row
+
+
+word_limit_lower = 4
+word_limit_upper = 200
+sentence_limit_lower = 20
+sentence_upper_limit = 200
+
+
+def save_if_passes_filter(file):
+    """
+    Loads the file and checks if it passes the filter. If so, its saved to the 'processed' directory
+    :param file:
+    :return:
+    """
+    filename = file.split("/")[-1]
+    try:
+        sentences_array = util.load_gzip_pickle(file)
+        sentences_array = [sentence for sentence in sentences_array if
+                           word_limit_lower < len(sentence.split(" ")) < word_limit_upper]
+
+        if sentence_limit_lower < len(sentences_array) < sentence_upper_limit:
+            util.save_gzip_pickle("%s/%s" % (processed_path, filename), sentences_array)
+            return True
+        return False
     except Exception as e:
         return str(e)

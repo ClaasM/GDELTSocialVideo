@@ -15,8 +15,7 @@ Dependencies:
 
 
 
-
-
+Make sure the Project is in your PYTHONPATH, otherwise the src wont be importable
 
 
 
