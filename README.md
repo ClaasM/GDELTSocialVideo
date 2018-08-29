@@ -11,7 +11,7 @@ There is no run configuration for Jupyter, though, so the notebook server has to
 
 Dependencies:
 
-
+brew install homebrew/cask/chromedriver
 
 
 

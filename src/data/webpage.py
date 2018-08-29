@@ -6,6 +6,8 @@ import re
 import nltk
 from bs4 import BeautifulSoup
 from langdetect import detect
+import scrapy
+from selenium import webdriver
 
 from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
 from src import util
@@ -32,7 +34,7 @@ def download_and_save(row):
         try:
             # Download and save document
             req = urllib.request.Request(document_identifier, headers={'User-Agent': 'Mozilla'})
-            doc = urllib.request.urlopen(req, timeout=5).read()
+            doc = urllib.request.urlopen(req).read()
             util.save_gzip_pickle(article_path, doc)
             return "Success"
         except Exception as e:
@@ -164,4 +166,18 @@ def save_if_passes_filter(file):
     except Exception as e:
         return str(e)
 
+driver = webdriver.Chrome()
+
+def download_rendered(url):
+    driver.get(url)
+    return driver.page_source[:100]
+
+def get_language_header(row):
+    index, (date, document_identifier, image_URL, raw_JSON) = row
+    try:
+        req = urllib.request.Request(document_identifier, headers={'User-Agent': 'Mozilla'})
+        res = urllib.request.urlopen(req)
+        return res.headers["Content-Language"]
+    except Exception as e:
+        return str(e)
 

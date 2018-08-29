@@ -36,3 +36,5 @@ gevent
 html5lib
 youtube-dl
 pytube
+scrapy
+selenium
