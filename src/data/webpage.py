@@ -180,4 +180,3 @@ def get_language_header(row):
         return res.headers["Content-Language"]
     except Exception as e:
         return str(e)
-

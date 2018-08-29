@@ -36,7 +36,25 @@ def save_gzip_pickle(path, object):
     with gzip.open(path, "wb+") as file:
         pickle.dump(object, file)
 
-#data_path = "../data"
-#file = 1078
-#to_plaintext(data_path + ("/raw/articles/%d" % file),
+
+# data_path = "../data"
+# file = 1078
+# to_plaintext(data_path + ("/raw/articles/%d" % file),
 #             data_path + ("/interim/unzipped/%d.html" % file))
+
+def download_urls(urls, filenames, path):
+    pass
+
+
+def get_GDELT_file_path(year=2018, month=7, day=3, hour=15, quarter=0):
+    """
+
+    :param year:
+    :param month:
+    :param day:
+    :param hour:
+    :param quarter:
+    :return:
+    """
+    return "%s/external/GDELT/%04d%02d%02d%02d%02d00.export.CSV.zip" % (
+    os.environ["DATA_PATH"], year, month, day, hour, quarter * 15)
