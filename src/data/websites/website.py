@@ -1,16 +1,14 @@
 import csv
-import os
-import urllib
 import gzip
+import os
 import re
+import urllib
+
 import nltk
 from bs4 import BeautifulSoup
 from langdetect import detect
-import scrapy
-from selenium import webdriver
-
-from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
 from src import util
+from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
 
 raw_path = os.environ["DATA_PATH"] + "/raw/articles/"
 sentences_path = os.environ["DATA_PATH"] + "/interim/sentences/"
@@ -138,10 +136,6 @@ def get_row_by_index(index):
             curr_index += 1
             row = next(reader)
         return row
-
-
-def get_row_by_id(_id):
-
 
 
 word_limit_lower = 4

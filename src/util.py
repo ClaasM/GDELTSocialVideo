@@ -39,3 +39,7 @@ def save_gzip_pickle(path, object):
 def append_line(path, line):
     with gzip.open(path, "w+") as outfile:
         outfile.write(line + "\n")
+
+
+def get_filename_from_url(url):
+    return url.split("/")[-1]
