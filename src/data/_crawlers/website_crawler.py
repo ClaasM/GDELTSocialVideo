@@ -1,6 +1,6 @@
 """
-Crawls all websites and saves all with Content-Language english and a youtube video in it.
-Also saves all websites that have already been crawled plus reason for discarding to avoid unnecessary crawling.
+Crawls all websites and saves which websites were successfully crawled.
+Saved each found embedded youtube video id to the database
 """
 
 from gzip import GzipFile

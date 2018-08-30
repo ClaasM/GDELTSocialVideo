@@ -140,6 +140,10 @@ def get_row_by_index(index):
         return row
 
 
+def get_row_by_id(_id):
+
+
+
 word_limit_lower = 4
 word_limit_upper = 200
 sentence_limit_lower = 20
@@ -165,12 +169,6 @@ def save_if_passes_filter(file):
         return False
     except Exception as e:
         return str(e)
-
-driver = webdriver.Chrome()
-
-def download_rendered(url):
-    driver.get(url)
-    return driver.page_source[:100]
 
 def get_language_header(row):
     index, (date, document_identifier, image_URL, raw_JSON) = row
