@@ -73,7 +73,7 @@ def crawl_urls(file):
 # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
 mentions_path = os.environ["DATA_PATH"] + "/external/GDELT/mentions/"
 files = glob.glob(mentions_path + "[0-9]*.mentions.csv.zip")
-pool = DummyPool(4)
+pool = DummyPool(8)
 
 count = 0
 for _ in pool.imap(crawl_urls, files):
