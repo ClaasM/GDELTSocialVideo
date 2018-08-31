@@ -18,6 +18,11 @@ matplotlib
 pandas
 beautifulsoup4
 nltk
-tensorflow==1.4.0
+#tensorflow==1.4.0
 keras==2.0.8
 pytube
+validators
+langdetect
+html5lib
+jupyter
+lxml

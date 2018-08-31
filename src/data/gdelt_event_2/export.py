@@ -17,30 +17,6 @@ HEADER = ["GLOBALEVENTID", "SQLDATE", "MonthYear", "Year", "FractionDate", "Acto
           "ActionGeo_Lat", "ActionGeo_Long", "ActionGeo_FeatureID", "DATEADDED", "SOURCEURL"]
 
 
-class RowIterator:
-    def __init__(self):
-        self.file_index = 0
-        self.file_iterator = iter(sorted(glob.glob(os.environ["DATA_PATH"] + "/external/GDELT/[0-9]*.export.CSV.zip")))
-        self.next_file()
-
-    def next_file(self):
-        self.file_index += 1
-        self.row_index = 0
-        self.row_iterator = pd.read_csv(next(self.file_iterator), compression='zip', header=None,
-                                        names=util.GDELT_HEADER, delimiter="\t").iterrows()
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        try:
-            return self.file_index, next(self.row_iterator)
-        except StopIteration:
-            # next file
-            self.next_file()
-            return self.file_index, self.row_index, next(self.row_iterator)
-
-
 def find_row_by_id(id):
     for file_index, row_index, row in RowIterator():
         if row[0] == id:

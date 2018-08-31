@@ -172,3 +172,28 @@ def get_language_header(row):
         return res.headers["Content-Language"]
     except Exception as e:
         return str(e)
+
+def crawl(url):
+    """
+    Does not execute Javascript which is faster and yields more
+    video_ids per unit of time, and since there are unlimited URL's it makes more sense this way.
+    :param url:
+    :return: BeautifulSoup of the page source
+    """
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla'})
+    page_source = urllib.request.urlopen(req).read()
+    return BeautifulSoup(page_source, features="lxml")
+
+
+def get_yt_sources(soup):
+    """
+    finds youtube iframes and gets their src attributes
+    :param soup:
+    :return:
+    """
+    iframes = soup.findAll("iframe")
+    for iframe in iframes:
+        if iframe.has_attr("src"):
+            src = iframe['src']
+            if "youtube.com" in src:
+                yield src
