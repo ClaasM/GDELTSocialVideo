@@ -5,6 +5,7 @@ import os
 TODO stuff like required columns, indexing, etc.
 """
 
+SUCCESS = "Success"
 
 class SQLiteHelper:
     def __init__(self, ):
@@ -20,14 +21,22 @@ class SQLiteHelper:
         return self.c.execute('''SELECT 1 FROM found_videos WHERE website_url=\'%s\'''' % website_url) \
                    .fetchone() is not None
 
-    def save_crawled(self, website_url):
-        self.c.execute('''INSERT INTO crawled_websites VALUES (\'%s\')''' % website_url)
+    def save_crawled(self, website_url, status=SUCCESS):
+        self.c.execute('''INSERT INTO crawled_websites VALUES (\'%s\', \'%s\')''' % (website_url, status))
         self.conn.commit()
 
     def save_mention(self, event_id, website_url):
-        self.c.execute('''INSERT INTO mention VALUES (%d, \'%s\')''' % (event_id, website_url))
+        self.c.execute('''INSERT INTO mentions VALUES (%d, \'%s\')''' % (event_id, website_url))
         self.conn.commit()
 
-    def save_found_video(self, website_url, video_id):
-        self.c.execute('''INSERT INTO found_videos VALUES (\'%s\',\'%s\')''' % (website_url, video_id))
+    def save_found_video_url(self, website_url, video_url):
+        self.c.execute('''INSERT INTO found_videos VALUES (\'%s\',\'%s\')''' % (website_url, video_url))
         self.conn.commit()
+
+    def save_usable_video_url(self, website_url, video_url):
+        self.c.execute('''INSERT INTO usable_videos VALUES (\'%s\',\'%s\')''' % (website_url, video_url))
+        self.conn.commit()
+
+    def usable_videos_iterator(self):
+        return self.c.execute('SELECT * FROM usable_videos')
+

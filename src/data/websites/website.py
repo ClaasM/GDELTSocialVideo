@@ -16,7 +16,6 @@ sentences_english_path = os.environ["DATA_PATH"] + "/interim/sentences_english/"
 tokens_path = os.environ["DATA_PATH"] + "/processed/tokens/"
 processed_path = os.environ["DATA_PATH"] + "/processed/sentences/"
 
-
 def download_and_save(row):
     """
     Queues a webpage for download if it does not exist
@@ -176,7 +175,7 @@ def get_language_header(row):
 def crawl(url):
     """
     Does not execute Javascript which is faster and yields more
-    video_ids per unit of time, and since there are unlimited URL's it makes more sense this way.
+    video_urls per unit of time, and since there are unlimited URL's it makes more sense this way.
     :param url:
     :return: BeautifulSoup of the page source
     """
@@ -185,9 +184,11 @@ def crawl(url):
     return BeautifulSoup(page_source, features="lxml")
 
 
-def get_yt_sources(soup):
+def get_iframe_video_sources(soup):
     """
-    finds youtube iframes and gets their src attributes
+    finds video iframes and gets their src attributes.
+    This is purposefully broad, it can easily be filtered for invalid URLs etc. later, but crawling again is expensive.
+    Plus the database doesn't take up much space.
     :param soup:
     :return:
     """
@@ -195,5 +196,6 @@ def get_yt_sources(soup):
     for iframe in iframes:
         if iframe.has_attr("src"):
             src = iframe['src']
-            if "youtube.com" in src:
+            # Only youtube videos for now, but might include other sources at some point.
+            if "youtube" in src:
                 yield src

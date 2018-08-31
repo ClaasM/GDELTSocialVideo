@@ -50,13 +50,3 @@ def is_url(string):
         return True
     else:
         return False # We just want boolean values, no ValidationFailure objects
-
-def extract_video_id(url):
-    """
-    Not failsafe (its not supposed to be)
-    :param url:
-    :return:
-    """
-    # https://www.youtube.com/embed/ZdLMtnNkHvQ?rel=0
-    #//www.youtube.com/embed/?wmode=opaque&hd=1&autoplay=0&showinfo=0&controls=0&rel=0
-    return url.split('/')[-1].split('?')[0]

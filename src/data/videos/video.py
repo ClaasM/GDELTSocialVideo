@@ -2,27 +2,18 @@ import os
 from pytube import YouTube
 
 
+"""
+TODO maybe it makes more sense to move this to util.video
+"""
 
-def download_and_save(url, path, filename):
+def get_id_from_yt_url(url):
     """
-    Downloads a video if it does not exist
-    :param url: youtube-URL of the video
-    :param filename: Name of the file
+    Not failsafe (its not supposed to be)
+    :param url:
     :return:
     """
+    # https://www.youtube.com/embed/ZdLMtnNkHvQ?rel=0
+    #//www.youtube.com/embed/?wmode=opaque&hd=1&autoplay=0&showinfo=0&controls=0&rel=0
+    return url.split('/')[-1].split('?')[0]
 
-    if os.path.isfile(os.path.join(path, filename)):
-        return "Already exists"
-    else:
-        try:
-            YouTube(url) \
-                .streams \
-                .filter(progressive=True, file_extension='mp4') \
-                .order_by('resolution') \
-                .asc() \
-                .first() \
-                .download(output_path=path, filename=filename)
-            return "Success"
-        except Exception as e:
-            return str(e)
 
