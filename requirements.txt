@@ -26,3 +26,4 @@ langdetect
 html5lib
 jupyter
 lxml
+graphviz
