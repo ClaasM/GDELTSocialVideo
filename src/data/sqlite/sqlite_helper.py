@@ -16,12 +16,16 @@ class SQLiteHelper:
     def is_crawled(self, website_url):
         """Checks if a website_url has already been successfully crawled."""
         # TODO AND status=\'Success\' omitted for now. We don't try again yet.
-        return self.c.execute('''SELECT 1 FROM crawled_websites WHERE website_url=?''', [website_url]) \
+        ret =  self.c.execute('''SELECT 1 FROM crawled_websites WHERE website_url=?''', [website_url]) \
                    .fetchone() is not None
+        self.conn.commit()
+        return ret
 
     def has_videos(self, website_url):
-        return self.c.execute('''SELECT 1 FROM found_videos WHERE website_url=?''', [website_url]) \
+        ret =  self.c.execute('''SELECT 1 FROM found_videos WHERE website_url=?''', [website_url]) \
                    .fetchone() is not None
+        self.conn.commit()
+        return ret
 
     def save_crawled(self, website_url, status=SUCCESS):
         self.c.execute('''INSERT INTO crawled_websites VALUES (?, ?)''', (website_url, status))

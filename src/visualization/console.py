@@ -7,8 +7,8 @@ from datetime import timedelta
 from multiprocessing import Value, Manager
 
 # Each column is 20 chars wide, plus the separator
-COL_WIDTH = 20
-COLUMNS = ["NUMBER", "TOTAL NUMBER", "PERCENTAGE", "RUNTIME", "PER SECOND", "EXP. REMAINING"]
+COL_WIDTH = 12
+COLUMNS = ["CURRENT", "TOTAL", "PERCENTAGE", "RUNTIME", "RATE", "EXPECTED"]
 COL_SEPARATOR = "|"
 ROW_SEPARATOR = "-"
 TIME_FORMAT = "%H:%M:%S"

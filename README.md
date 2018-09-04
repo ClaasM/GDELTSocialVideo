@@ -24,6 +24,12 @@ Make sure the Project is in your PYTHONPATH, otherwise the src wont be importabl
 Virtualenv:
 
 source ~/thesis/bin/activate
+python3 src/data/_crawlers/website_crawler.py
+
+Useful monitoring:
+Check internet speed:
+curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -
+
 
 SQLite:
 
