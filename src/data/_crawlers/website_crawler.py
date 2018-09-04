@@ -18,13 +18,16 @@ from bs4 import BeautifulSoup
 
 from src.data.sqlite.sqlite_helper import SQLiteHelper
 from src.data.websites import website
-from src import util
+from src import util, constants
+from src.visualization.console import CrawlingProgress
+
+''' Some intialization TODO use the separating comments from the BA '''
 
 # Data availability is not a problem, so I'm only using articles that are 100% confident to be about the event
 # This increases relevance of the videos.
 CONFIDENCE_THRESHOLD = 100
-
 manager = PoolManager(10000)
+crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=10000)
 
 
 def crawl_urls(file):
@@ -34,7 +37,7 @@ def crawl_urls(file):
     :param file:
     :return:
     """
-    print("Starting file %s" % file)
+    # print("Starting file %s" % file)
     # We only need a couple of columns
     mentions = pd.read_csv(file, compression='zip', header=None,
                            names=["GlobalEventID", "MentionIdentifier", "Confidence"],
@@ -43,6 +46,9 @@ def crawl_urls(file):
     # SQLite connections have to be created in the thread they are used.
     sqlite_helper = SQLiteHelper()
     for index, (global_event_id, mention_identifier, confidence) in mentions.iterrows():
+        # Report progress only every 100 mentions
+        if index % 100 == 0 and index != 0:
+            crawling_progress.inc(by=100)
         if util.is_url(mention_identifier) and confidence >= CONFIDENCE_THRESHOLD:
             # Mentions are not always from a website, so MentionIdentifier is not always a URL. Those that aren't are skipped.
             # TODO pie chart of how many are URLS (split by MentionSourceName)
@@ -60,11 +66,10 @@ def crawl_urls(file):
                 # crawl the website.
                 # Whatever happens, the results is saved. This is useful information, because re-crawling is expensive.
                 try:
-                    # bs = website.crawl(mention_identifier)
                     res = manager.request('GET', mention_identifier)
-                    if res.status > 300:
+                    if res.status >= 300:
                         # The website was not successfully crawled, it should be tried again
-                        print(res.status)
+                        # print(res.status)
                         sqlite_helper.save_crawled(mention_identifier, str(res.status))
                     else:
                         bs = BeautifulSoup(res.data, features="lxml")
@@ -81,19 +86,22 @@ def crawl_urls(file):
                         # print("Saved as crawled: %s" % mention_identifier)
                 except Exception as e:
                     # The website was not successfully crawled, it should be tried again
-                    print(e)
+                    # print(e)
                     sqlite_helper.save_crawled(mention_identifier, str(e))
 
 
-# We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
-mentions_path = os.environ["DATA_PATH"] + "/external/GDELT/mentions/"
-files = glob.glob(mentions_path + "[0-9]*.mentions.csv.zip")
-pool = Pool(32)  # 16 seems to be around optimum
+def run():
+    # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
+    mentions_path = os.environ["DATA_PATH"] + "/external/GDELT/mentions/"
+    files = glob.glob(mentions_path + "[0-9]*.mentions.csv.zip")
+    pool = Pool(32)  # 16 seems to be around optimum
 
-count = 0
-for _ in pool.imap_unordered(crawl_urls, files):
-    count += 1
-    if count % 1 == 0:
-        print("Progress: %d" % count)
-pool.close()
-pool.join()
+    count = 0
+    for _ in pool.imap_unordered(crawl_urls, files):
+        count += 1
+    pool.close()
+    pool.join()
+
+
+if __name__ == "__main__":
+    run()
