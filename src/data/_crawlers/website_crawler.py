@@ -27,7 +27,7 @@ from src.visualization.console import CrawlingProgress
 # This increases relevance of the videos.
 CONFIDENCE_THRESHOLD = 100
 manager = PoolManager(10000)
-crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=1000)
+crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=10000)
 
 
 def crawl_urls(file):

@@ -5,7 +5,10 @@ source ~/thesis/bin/activate
 sqlite3 ~/Master-Thesis/data/interim/GDELT.db
 postgres -D /usr/local/var/postgres/
 psql --username="postgres"
+psql -U postgres -d thesis -a -f
 
+source ~/thesis/bin/activate
+python3 src/data/_crawlers/website_crawler.py
 
 To test darknet:
 
@@ -24,11 +27,6 @@ Dependencies:
 brew install homebrew/cask/chromedriver
 
 Make sure the Project is in your PYTHONPATH, otherwise the src wont be importable
-
-Virtualenv:
-
-source ~/thesis/bin/activate
-python3 src/data/_crawlers/website_crawler.py
 
 Useful monitoring:
 Check internet speed:
