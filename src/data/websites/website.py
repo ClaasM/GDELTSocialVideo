@@ -7,7 +7,6 @@ import urllib
 # DO NOT IMPORT NLTK ANYWHERE THAT USES MULTIPROCESSING! https://github.com/nltk/nltk/issues/947
 # import nltk
 
-import requests
 from bs4 import BeautifulSoup
 from langdetect import detect
 from src import util

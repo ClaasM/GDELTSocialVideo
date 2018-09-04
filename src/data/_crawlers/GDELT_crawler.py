@@ -4,6 +4,10 @@ from collections import Counter
 import urllib.request
 from src import util
 
+
+"""
+TODO use progress here as well
+"""
 YEAR = "2018"
 MONTH = "07"
 COLLECTION = "mentions"  # Choices are export, gkg or mentions. See GDELT docs.

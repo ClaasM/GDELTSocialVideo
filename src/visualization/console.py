@@ -1,20 +1,20 @@
 """
-TODO this might be worth a separate package
+TODO this might be worth a separate package (or at least a gistl)
+TODO use carriage return
 """
 import time
 from datetime import timedelta
 from multiprocessing import Value, Manager
 
 # Each column is 20 chars wide, plus the separator
-
 COL_WIDTH = 20
 COLUMNS = ["NUMBER", "TOTAL NUMBER", "PERCENTAGE", "RUNTIME", "PER SECOND", "EXP. REMAINING"]
 COL_SEPARATOR = "|"
 ROW_SEPARATOR = "-"
 TIME_FORMAT = "%H:%M:%S"
 
-
 class CrawlingProgress:
+
     def __init__(self, total_count=1000, update_every=100000):
         # Variables that need to be synced across Threads
         self.count = Value('i', 0)

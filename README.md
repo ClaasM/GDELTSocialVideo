@@ -21,7 +21,15 @@ brew install homebrew/cask/chromedriver
 
 Make sure the Project is in your PYTHONPATH, otherwise the src wont be importable
 
+Virtualenv:
 
+source ~/thesis/bin/activate
+
+SQLite:
+
+apt install..
+sqlite data/interim/GDELT.db
+.read src/data/init_db.sql
 
 master_thesis
 ==============================

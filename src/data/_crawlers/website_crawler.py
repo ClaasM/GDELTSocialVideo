@@ -27,7 +27,7 @@ from src.visualization.console import CrawlingProgress
 # This increases relevance of the videos.
 CONFIDENCE_THRESHOLD = 100
 manager = PoolManager(10000)
-crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=10000)
+crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=1000)
 
 
 def crawl_urls(file):
@@ -94,7 +94,7 @@ def run():
     # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
     mentions_path = os.environ["DATA_PATH"] + "/external/GDELT/mentions/"
     files = glob.glob(mentions_path + "[0-9]*.mentions.csv.zip")
-    pool = Pool(32)  # 16 seems to be around optimum
+    pool = Pool(8)  # 16 seems to be around optimum
 
     count = 0
     for _ in pool.imap_unordered(crawl_urls, files):
