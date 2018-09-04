@@ -9,7 +9,7 @@ SUCCESS = "Success"
 
 class SQLiteHelper:
     def __init__(self, ):
-        self.conn = psycopg2.connect(host="localhost",database="thesis", user="postgres", password="")
+        self.conn = psycopg2.connect(database="thesis")
         self.c = self.conn.cursor()
 
     def is_crawled(self, website_url):
