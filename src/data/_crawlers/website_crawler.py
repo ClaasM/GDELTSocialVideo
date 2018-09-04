@@ -60,7 +60,7 @@ def crawl_urls(file):
                 if sqlite_helper.has_videos(mention_identifier):
                     # The website has videos on it, so this mention of this event needs to saved with a link to the website.
                     # The video ids from this website were already saved when the website was first crawled.
-                    sqlite_helper.save_mention(global_event_id, mention_identifier)
+                    sqlite_helper.save_mention_with_video(global_event_id, mention_identifier)
                     # print("Already saved videos: %s" % mention_identifier)
             else:
                 # crawl the website.
@@ -77,7 +77,7 @@ def crawl_urls(file):
                         video_urls = list(website.get_video_sources(bs))
                         if len(video_urls) > 0:
                             # This website has videos in it
-                            sqlite_helper.save_mention(global_event_id, mention_identifier)
+                            sqlite_helper.save_mention_with_video(global_event_id, mention_identifier)
                             for platform, video_url in video_urls:
                                 sqlite_helper.save_found_video_url(mention_identifier, platform, video_url)
                                 # print("Found video saved: %s %s" % (video_url, mention_identifier))

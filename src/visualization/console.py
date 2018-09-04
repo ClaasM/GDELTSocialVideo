@@ -61,4 +61,4 @@ class CrawlingProgress:
                                ]))
 
     def time_str(self, seconds):
-        return '%d:%02d:%02d' % (seconds / 3600, seconds / 60 % 60, seconds % 60)
+        return '%02d:%02d:%02d' % (seconds / 3600, seconds / 60 % 60, seconds % 60)

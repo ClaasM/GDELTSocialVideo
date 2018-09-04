@@ -27,7 +27,7 @@ class SQLiteHelper:
         self.c.execute('''INSERT INTO crawled_websites VALUES (?, ?)''', (website_url, status))
         self.conn.commit()
 
-    def save_mention(self, event_id, website_url):
+    def save_mention_with_video(self, event_id, website_url):
         self.c.execute('''INSERT INTO mentions VALUES (?, ?)''', (event_id, website_url))
         self.conn.commit()
 
