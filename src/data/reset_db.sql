@@ -1,5 +1,7 @@
-CREATE DATABASE IF NOT EXISTS thesis;
-USE thesis;
+DELETE FROM crawled_websites;
+DELETE FROM found_videos;
+DELETE FROM mentions;
+DELETE FROM usable_videos;
 
 CREATE TABLE IF NOT EXISTS crawled_websites (
   website_url TEXT NOT NULL,
@@ -8,8 +10,8 @@ CREATE TABLE IF NOT EXISTS crawled_websites (
 
 CREATE TABLE IF NOT EXISTS found_videos (
   website_url TEXT NOT NULL,
-  platform  TEXT NOT NULL,
-  video_url TEXT NOT NULL
+  platform    TEXT NOT NULL,
+  video_url   TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS mentions (
@@ -22,9 +24,3 @@ CREATE TABLE IF NOT EXISTS usable_videos (
   website_url TEXT NOT NULL,
   video_url   TEXT NOT NULL
 );
-
-#CREATE INDEX found_video_website_url_idx
-#  ON found_videos (website_url);
-#CREATE INDEX crawled_websites_website_url_idx
-#  ON crawled_websites (website_url);
-# TODO....

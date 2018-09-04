@@ -28,3 +28,4 @@ html5lib
 jupyter
 lxml
 graphviz
+mysql-connector
