@@ -1,6 +1,3 @@
-import mysql.connector
-import os
-
 import psycopg2
 
 """
