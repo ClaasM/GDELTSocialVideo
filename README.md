@@ -3,7 +3,9 @@ Getting started:
 ssh claas@vid-gpu1.inf.cs.cmu.edu
 source ~/thesis/bin/activate
 sqlite3 ~/Master-Thesis/data/interim/GDELT.db
-mysql.server start
+postgres -D /usr/local/var/postgres/
+psql --username="postgres"
+
 
 To test darknet:
 

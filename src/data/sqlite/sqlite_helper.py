@@ -1,6 +1,8 @@
 import mysql.connector
 import os
 
+import psycopg2
+
 """
 TODO stuff like required columns, indexing, etc.
 """
@@ -10,13 +12,7 @@ SUCCESS = "Success"
 
 class SQLiteHelper:
     def __init__(self, ):
-        :
-        self.conn = mysql.connector.connect(
-            host=os.environ["MYSQL_HOST"] if "MYSQL_HOST" in os.environ else "localhost",
-            password=os.environ["MYSQL_PASSWORD"] if "MYSQL_PASSWORD" in os.environ else "",
-            user=os.environ["MYSQL_USER"] if "MYSQL_USER" in os.environ else "root",
-            database="thesis"
-        )
+        self.conn = psycopg2.connect(host="localhost",database="thesis", user="postgres", password="")
         self.c = self.conn.cursor()
 
     def is_crawled(self, website_url):
