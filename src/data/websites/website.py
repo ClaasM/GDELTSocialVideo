@@ -4,17 +4,22 @@ import os
 import re
 import urllib
 
-import nltk
+# DO NOT IMPORT NLTK ANYWHERE THAT USES MULTIPROCESSING! https://github.com/nltk/nltk/issues/947
+# import nltk
+
+import requests
 from bs4 import BeautifulSoup
 from langdetect import detect
 from src import util
-from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
+
+# from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
 
 raw_path = os.environ["DATA_PATH"] + "/raw/articles/"
 sentences_path = os.environ["DATA_PATH"] + "/interim/sentences/"
 sentences_english_path = os.environ["DATA_PATH"] + "/interim/sentences_english/"
 tokens_path = os.environ["DATA_PATH"] + "/processed/tokens/"
 processed_path = os.environ["DATA_PATH"] + "/processed/sentences/"
+
 
 def download_and_save(row):
     """
@@ -163,6 +168,7 @@ def save_if_passes_filter(file):
     except Exception as e:
         return str(e)
 
+
 def get_language_header(row):
     index, (date, document_identifier, image_URL, raw_JSON) = row
     try:
@@ -171,6 +177,7 @@ def get_language_header(row):
         return res.headers["Content-Language"]
     except Exception as e:
         return str(e)
+
 
 def crawl(url):
     """
@@ -184,7 +191,14 @@ def crawl(url):
     return BeautifulSoup(page_source, features="lxml")
 
 
-def get_iframe_video_sources(soup):
+# These are used for a preliminary check. They do not yet guarantee that the src is acutally an embedded video that can be downloaded.
+# That is done afterwards, when processing the data.
+FB_VIDEO_IDENTIFIER = "www.facebook.com/plugins/video.php"
+YT_VIDEO_IDENTIFIER = "www.youtube.com/embed"
+TWITTER_IDENTIFIER_REGEX = r'twitter.com/[a-zA-Z0-9_]{1,15}/status'  # TODO cite source for this
+
+
+def get_video_sources(soup):
     """
     finds video iframes and gets their src attributes.
     This is purposefully broad, it can easily be filtered for invalid URLs etc. later, but crawling again is expensive.
@@ -197,5 +211,19 @@ def get_iframe_video_sources(soup):
         if iframe.has_attr("src"):
             src = iframe['src']
             # Only youtube videos for now, but might include other sources at some point.
-            if "youtube" in src:
-                yield src
+            if YT_VIDEO_IDENTIFIER in src:
+                yield "youtube", src
+            elif FB_VIDEO_IDENTIFIER in src:
+                yield "facebook", src
+
+    # Tweets are embedded blockquotes with class "twitter-tweet"
+    blockquotes = soup.findAll("blockquote", "twitter-tweet")
+    for blockquote in blockquotes:
+        links = blockquote.findAll("a")
+        if len(links) >= 1:
+            link = links[-1]
+            # The last link is the link to the tweet.
+            if link.has_attr("href"):
+                href = link["href"]
+                if re.search(TWITTER_IDENTIFIER_REGEX, href):
+                    yield "twitter", href
