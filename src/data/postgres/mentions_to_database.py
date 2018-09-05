@@ -26,7 +26,7 @@ def write_to_db(filepath):
     archive.close()
 
 
-pool = Pool(8)  # 16 seems to be around optimum
+pool = Pool(8)
 count = 0
 for _ in pool.imap_unordered(write_to_db, files):
     count += 1

@@ -2,17 +2,17 @@ Getting started:
 
 ssh claas@vid-gpu1.inf.cs.cmu.edu
 source ~/thesis/bin/activate
-sqlite3 ~/Master-Thesis/data/interim/GDELT.db
-postgres -D /usr/local/var/postgres/
-psql --username="postgres"
-psql -U postgres -d thesis -a -f
 
-source ~/thesis/bin/activate
 python3 src/data/_crawlers/website_crawler.py
-
-
 slurm -i eth0
 top
+psql -U postgres -d thesis
+
+postgres -D /usr/local/var/postgres/
+psql -U postgres -d thesis
+
+tmux:
+[: scrolling with up and down arrows
 
 To test darknet:
 

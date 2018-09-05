@@ -8,9 +8,10 @@ import csv
 import glob
 import os
 import zipfile
-
+import psycopg2
 import io
 from multiprocessing import Pool
+from lxml import etree
 
 from urllib3 import PoolManager
 import urllib3
@@ -77,9 +78,11 @@ def crawl_urls(filepath):
                         # print(res.status)
                         sqlite_helper.save_crawled(mention_identifier, str(res.status))
                     else:
-                        bs = BeautifulSoup(res.data, features="lxml")
+                        # bs = BeautifulSoup(res.data, features="lxml")
+                        # video_urls = list(website.get_video_sources_bs(bs))
+                        et = etree.fromstring(res.data)
+                        video_urls = list(website.get_video_sources_etree(et))
                         # find video iframes and get their src attributes
-                        video_urls = list(website.get_video_sources_bs(bs))
                         if len(video_urls) > 0:
                             # This website has videos in it
                             sqlite_helper.save_mention_with_video(global_event_id, mention_identifier)
@@ -98,6 +101,7 @@ def crawl_urls(filepath):
     crawling_progress.inc(by=index % 100)
     file.close()
     archive.close()
+    sqlite_helper.disconnect()
 
 
 def run():
@@ -114,4 +118,9 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    # Making sure the script restarts whenever the database connection is struggling
+    while True:
+        try:
+            run()
+        except psycopg2.OperationalError as e:
+            print("Run crashed: %s" % str(e))

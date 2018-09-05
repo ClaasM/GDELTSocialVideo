@@ -41,3 +41,6 @@ class SQLiteHelper:
     def usable_videos_iterator(self):
         self.c.execute('SELECT * FROM usable_videos')
         return self.c
+
+    def disconnect(self):
+        self.conn.close()

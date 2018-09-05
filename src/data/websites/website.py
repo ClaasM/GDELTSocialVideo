@@ -231,11 +231,25 @@ def get_video_sources_bs(soup):
 
 def get_video_sources_etree(etree):
     """
-       finds video iframes and gets their src attributes from an etree.
-       This is purposefully broad, it can easily be filtered for invalid URLs etc. later, but crawling again is expensive.
-       Plus the database doesn't take up much space.
-       :param etree:
-       :return:
-       """
+    finds video iframes and gets their src attributes from an etree.
+    This is purposefully broad, it can easily be filtered for invalid URLs etc. later, but crawling again is expensive.
+    Plus the database doesn't take up much space.
+    :param etree:
+    :return:
+    """
 
-    etree.iter()
+    element_iterator = etree.iter()
+    for element in element_iterator:
+        if element.tag == "iframe":
+            if "src" in element.attrib:
+                if YT_VIDEO_IDENTIFIER in element.attrib["src"]:
+                    yield "youtube", element.attrib["src"]
+                elif FB_VIDEO_IDENTIFIER in element.attrib["src"]:
+                    yield "facebook", element.attrib["src"]
+        elif element.tag == "blockquote":
+            for sub_element in element.iter():
+                # next(element_iterator)
+                if sub_element.tag == "a":
+                    if "href" in sub_element.attrib:
+                        if re.search(TWITTER_IDENTIFIER_REGEX, sub_element.attrib["href"]):
+                            yield "twitter", sub_element.attrib["href"]
