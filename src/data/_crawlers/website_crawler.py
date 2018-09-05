@@ -19,7 +19,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from bs4 import BeautifulSoup
 
-from src.data.sqlite.sqlite_helper import SQLiteHelper
+from src.data.postgres.postgres_helper import SQLiteHelper
 from src.data.websites import website
 from src import util, constants
 from src.visualization.console import CrawlingProgress
@@ -79,7 +79,7 @@ def crawl_urls(filepath):
                     else:
                         bs = BeautifulSoup(res.data, features="lxml")
                         # find video iframes and get their src attributes
-                        video_urls = list(website.get_video_sources(bs))
+                        video_urls = list(website.get_video_sources_bs(bs))
                         if len(video_urls) > 0:
                             # This website has videos in it
                             sqlite_helper.save_mention_with_video(global_event_id, mention_identifier)

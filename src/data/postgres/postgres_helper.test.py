@@ -1,4 +1,4 @@
-from src.data.sqlite.sqlite_helper import SQLiteHelper
+from src.data.postgres.postgres_helper import SQLiteHelper
 
 # TODO use a proper test suite, do this on a test db, etc.
 

@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS thesis;
-USE thesis;
-
 CREATE TABLE IF NOT EXISTS crawled_websites (
   website_url TEXT NOT NULL,
   status      TEXT NOT NULL
@@ -23,8 +20,5 @@ CREATE TABLE IF NOT EXISTS usable_videos (
   video_url   TEXT NOT NULL
 );
 
-#CREATE INDEX found_video_website_url_idx
-#  ON found_videos (website_url);
-#CREATE INDEX crawled_websites_website_url_idx
-#  ON crawled_websites (website_url);
-# TODO....
+CREATE INDEX crawled_websites_website_url ON crawled_websites (website_url);
+CREATE INDEX found_videos_website_url ON found_videos (website_url);

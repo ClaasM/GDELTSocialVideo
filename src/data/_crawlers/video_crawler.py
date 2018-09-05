@@ -5,7 +5,7 @@ from multiprocessing import Pool
 from pytube import YouTube
 from src.data.videos import video
 
-from src.data.sqlite.sqlite_helper import SQLiteHelper
+from src.data.postgres.postgres_helper import SQLiteHelper
 
 raw_video_path = os.environ["DATA_PATH"] + "/raw/GDELT/videos/"
 raw_article_path = os.environ["DATA_PATH"] + "/raw/GDELT/articles/"
