@@ -78,10 +78,10 @@ def crawl_urls(filepath):
                         # print(res.status)
                         sqlite_helper.save_crawled(mention_identifier, str(res.status))
                     else:
-                        # bs = BeautifulSoup(res.data, features="lxml")
-                        # video_urls = list(website.get_video_sources_bs(bs))
-                        et = etree.fromstring(res.data)
-                        video_urls = list(website.get_video_sources_etree(et))
+                        bs = BeautifulSoup(res.data, features="lxml")
+                        video_urls = list(website.get_video_sources_bs(bs))
+                        #et = etree.fromstring(res.data)
+                        #video_urls = list(website.get_video_sources_etree(et))
                         # find video iframes and get their src attributes
                         if len(video_urls) > 0:
                             # This website has videos in it
