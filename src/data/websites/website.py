@@ -226,3 +226,29 @@ def get_video_sources(soup):
                 href = link["href"]
                 if re.search(TWITTER_IDENTIFIER_REGEX, href):
                     yield "twitter", href
+
+def get_video_sources_fast(html):
+
+
+
+    iframes = soup.findAll("iframe")
+    for iframe in iframes:
+        if iframe.has_attr("src"):
+            src = iframe['src']
+            # Only youtube videos for now, but might include other sources at some point.
+            if YT_VIDEO_IDENTIFIER in src:
+                yield "youtube", src
+            elif FB_VIDEO_IDENTIFIER in src:
+                yield "facebook", src
+
+    # Tweets are embedded blockquotes with class "twitter-tweet"
+    blockquotes = soup.findAll("blockquote", "twitter-tweet")
+    for blockquote in blockquotes:
+        links = blockquote.findAll("a")
+        if len(links) >= 1:
+            link = links[-1]
+            # The last link is the link to the tweet.
+            if link.has_attr("href"):
+                href = link["href"]
+                if re.search(TWITTER_IDENTIFIER_REGEX, href):
+                    yield "twitter", href
