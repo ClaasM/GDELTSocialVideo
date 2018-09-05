@@ -10,6 +10,10 @@ psql -U postgres -d thesis -a -f
 source ~/thesis/bin/activate
 python3 src/data/_crawlers/website_crawler.py
 
+
+slurm -i eth0
+top
+
 To test darknet:
 
 ./darknet detector test cfg/coco.data cfg/yolov3.cfg yolov3.weights data/dog.jpg

@@ -4,9 +4,12 @@ Saves each found embedded youtube video id to the database.
 Since crawling is I/O bound anyways, readability was prioritized over speed.
 Anything else is nonsense in Python anyways.
 """
+import csv
 import glob
 import os
-import pandas as pd
+import zipfile
+
+import io
 from multiprocessing import Pool
 
 from urllib3 import PoolManager
@@ -30,22 +33,24 @@ manager = PoolManager(10000)
 crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=10000)
 
 
-def crawl_urls(file):
+def crawl_urls(filepath):
     """
     Crawls all urls in a mentions-file.
     This is done for each 15-minute file.
     :param file:
     :return:
     """
-    # print("Starting file %s" % file)
-    # We only need a couple of columns
-    mentions = pd.read_csv(file, compression='zip', header=None,
-                           names=["GlobalEventID", "MentionIdentifier", "Confidence"],
-                           delimiter="\t",
-                           usecols=[0, 5, 11])
+    # reading manually instead of with pandas to relieve some memory,
+    # and also because pandas seems to sometimes forget closing files
+    archive = zipfile.ZipFile(filepath)
+    file = archive.open(archive.namelist()[0])
+    reader = csv.reader(io.TextIOWrapper(file), delimiter='\t')
+
     # SQLite connections have to be created in the thread they are used.
     sqlite_helper = SQLiteHelper()
-    for index, (global_event_id, mention_identifier, confidence) in mentions.iterrows():
+    index = 0
+    for row in reader:
+        global_event_id, mention_identifier, confidence = row[0], row[5], int(row[11])
         # Report progress only every 100 mentions
         if index % 100 == 0 and index != 0:
             crawling_progress.inc(by=100)
@@ -88,13 +93,18 @@ def crawl_urls(file):
                     # The website was not successfully crawled, it should be tried again
                     # print(e)
                     sqlite_helper.save_crawled(mention_identifier, str(e))
+        index += 1
+    # report the remaining, unreported read lines and
+    crawling_progress.inc(by=index % 100)
+    file.close()
+    archive.close()
 
 
 def run():
     # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
     mentions_path = os.environ["DATA_PATH"] + "/external/GDELT/mentions/"
     files = glob.glob(mentions_path + "[0-9]*.mentions.csv.zip")
-    pool = Pool(32)  # 16 seems to be around optimum
+    pool = Pool(16)  # 16 seems to be around optimum
 
     count = 0
     for _ in pool.imap_unordered(crawl_urls, files):
