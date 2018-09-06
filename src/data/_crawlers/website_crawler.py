@@ -6,21 +6,20 @@ Anything else is nonsense in Python anyways.
 """
 import csv
 import glob
+import io
 import os
 import zipfile
-import psycopg2
-import io
 from multiprocessing import Pool
-from lxml import etree
 
-from urllib3 import PoolManager
+import psycopg2
 import urllib3
+from urllib3 import PoolManager
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from bs4 import BeautifulSoup
 
-from src.data.postgres.postgres_helper import SQLiteHelper
+from src.data.postgres.postgres_helper import PostgresHelper
 from src.data.websites import website
 from src import util, constants
 from src.visualization.console import CrawlingProgress
@@ -48,7 +47,7 @@ def crawl_urls(filepath):
     reader = csv.reader(io.TextIOWrapper(file), delimiter='\t')
 
     # SQLite connections have to be created in the thread they are used.
-    sqlite_helper = SQLiteHelper()
+    sqlite_helper = PostgresHelper()
     index = 0
     for row in reader:
         global_event_id, mention_identifier, confidence = row[0], row[5], int(row[11])

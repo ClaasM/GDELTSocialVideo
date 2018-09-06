@@ -7,9 +7,12 @@ python3 src/data/_crawlers/website_crawler.py
 slurm -i eth0
 top
 psql -U postgres -d thesis
+pg_dump -U postgres thesis > dump
+psql -U postgres thesis < /dump
+
 
 postgres -D /usr/local/var/postgres/
-psql -U postgres -d thesis
+
 
 tmux:
 [: scrolling with up and down arrows

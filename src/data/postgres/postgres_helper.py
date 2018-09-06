@@ -7,7 +7,7 @@ TODO stuff like required columns, indexing, etc.
 SUCCESS = "Success"
 
 
-class SQLiteHelper:
+class PostgresHelper:
     def __init__(self, ):
         self.conn = psycopg2.connect(database="thesis", user="postgres")
         self.c = self.conn.cursor()
@@ -41,6 +41,8 @@ class SQLiteHelper:
     def usable_videos_iterator(self):
         self.c.execute('SELECT * FROM usable_videos')
         return self.c
+
+
 
     def disconnect(self):
         self.conn.close()

@@ -1,8 +1,8 @@
-from src.data.postgres.postgres_helper import SQLiteHelper
+from src.data.postgres.postgres_helper import PostgresHelper
 
 # TODO use a proper test suite, do this on a test db, etc.
 
-sqlite_helper = SQLiteHelper()
+sqlite_helper = PostgresHelper()
 
 assert sqlite_helper.save_crawled("www.crawled.com") is None
 assert sqlite_helper.is_crawled("www.crawled.com")
