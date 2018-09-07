@@ -30,20 +30,12 @@ class PostgresHelper:
         self.conn.commit()
 
     def save_mention_with_video(self, event_id, website_url):
-        self.c.execute('INSERT INTO mentions VALUES (%s, %s)', (event_id, website_url))
+        self.c.execute('INSERT INTO mentions (event_id, website_url) VALUES (%s, %s)', (event_id, website_url))
         self.conn.commit()
 
     def save_found_video_url(self, website_url, platform, video_url):
-        self.c.execute('INSERT INTO found_videos VALUES (%s,%s,%s)', (website_url, platform, video_url))
+        self.c.execute('INSERT INTO found_videos (website_url, platform, video_url) VALUES (%s,%s,%s)', (website_url, platform, video_url))
         self.conn.commit()
-
-    def save_usable_video_url(self, website_url, video_url):
-        self.c.execute('INSERT INTO usable_videos VALUES (%s,%s)', (website_url, video_url))
-        self.conn.commit()
-
-    def usable_videos_iterator(self):
-        self.c.execute('SELECT * FROM usable_videos')
-        return self.c
 
     def get_columns_where(self, table, columns, key, value):
         query = 'SELECT (%s) FROM %s WHERE %s=\'%s\'' % (','.join(columns), table, key, value)
