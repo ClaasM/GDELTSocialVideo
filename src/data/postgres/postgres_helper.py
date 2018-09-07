@@ -21,8 +21,10 @@ class PostgresHelper:
         # If the status is a 3 digit status code we don't crawl again since thats unlikely to change,
         # except for those status codes that are marked as "try_again".
         # Any other issue (i.e. connectivity issues) lead to a re-crawl.
-        # len(result[0]) == 3 or "Too many open files" not in result[0] TODO and also use not in try_again
-        return result and len(result) > 0 and (result[0] == SUCCESS or "leaderpost.com" not in website_url)
+        crawled_successfully = result and len(result) > 0 and (result[0] == SUCCESS or (len(result[0]) == 3 and result[0] not in try_again))
+        #if not crawled_successfully:
+        #    print("Recrawling %s" % result[0])
+        return crawled_successfully
 
         # return result and len(result) > 0 and result[0]==SUCCESS
 

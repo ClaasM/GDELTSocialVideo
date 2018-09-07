@@ -37,7 +37,7 @@ CONFIDENCE_THRESHOLD = 100
 # Increasing pool size to 1000 gives a slight performance boost but requires increasing the open file limit
 # https://www.ibm.com/support/knowledgecenter/en/SSRMWJ_6.0.0/com.ibm.isim.doc_6.0/trouble/cpt/cpt_ic_trouble_many_filesopen.htm
 # Sometimes, servers cannot handle connection pooling, so it is recommended to do a "second pass" without it.
-# connection_pool = PoolManager(100)
+connection_pool = PoolManager(100)
 crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=100000)
 
 
@@ -80,11 +80,11 @@ def crawl_urls(filepath):
                 # Whatever happens, the results is saved. This is useful information, because re-crawling is expensive.
                 try:
                     # Sometimes, servers cannot handle connection pooling, so it is recommended to do a "second pass" without it.
-                    # res = connection_pool.request('GET', mention_identifier, headers={'User-Agent': 'Mozilla'})
+                    res = connection_pool.request('GET', mention_identifier, headers={'User-Agent': 'Mozilla'})
 
-                    req =  urllib.request.Request(mention_identifier, headers={'User-Agent': 'Mozilla'})
-                    res = urllib.request.urlopen(req)
-                    res.data = res.read()
+                    # req =  urllib.request.Request(mention_identifier, headers={'User-Agent': 'Mozilla'})
+                    # res = urllib.request.urlopen(req)
+                    # res.data = res.read()
 
                     if res.status >= 300:
                         # The website was not successfully crawled, it should be tried again
