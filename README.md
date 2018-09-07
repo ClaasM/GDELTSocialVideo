@@ -12,7 +12,7 @@ psql -U postgres -d thesis
 
 pg_dump -U postgres thesis > dump
 scp claas@vid-gpu1.inf.cs.cmu.edu:~/dump data/
-psql -U postgres thesis < /dump
+psql -U postgres thesis < data/dump
 
 
 postgres -D /usr/local/var/postgres/
