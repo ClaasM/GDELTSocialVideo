@@ -29,16 +29,16 @@ class PostgresHelper:
 
     def save_crawled(self, website_url, status=SUCCESS):
         # print("New Status %s" % status)
-        self.c.execute('''INSERT INTO articles (website_url, status) VALUES (%S, %S) ON CONFLICT (website_url) DO UPDATE
+        self.c.execute('''INSERT INTO articles (website_url, status) VALUES (%s, %s) ON CONFLICT (website_url) DO UPDATE
                           SET status = excluded.status;''', (website_url, status))
         self.conn.commit()
 
     def save_mention_with_video(self, event_id, website_url):
-        self.c.execute('INSERT INTO mentions (event_id, website_url) VALUES (%S, %S)', (event_id, website_url))
+        self.c.execute('INSERT INTO mentions (event_id, website_url) VALUES (%s, %s)', (event_id, website_url))
         self.conn.commit()
 
     def save_found_video_url(self, website_url, platform, video_url):
-        self.c.execute('INSERT INTO found_videos (website_url, platform, video_url) VALUES (%S,%S,%S)',
+        self.c.execute('INSERT INTO found_videos (website_url, platform, video_url) VALUES (%s,%s,%s)',
                        (website_url, platform, video_url))
         self.conn.commit()
 
