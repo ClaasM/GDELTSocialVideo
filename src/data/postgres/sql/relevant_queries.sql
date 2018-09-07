@@ -1,1 +1,1 @@
-SELECT Count(*) FROM crawled_websites;
+SELECT Count(*) FROM articles;

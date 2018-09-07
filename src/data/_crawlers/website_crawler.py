@@ -89,7 +89,7 @@ def crawl_urls(filepath):
                                 sqlite_helper.save_found_video_url(mention_identifier, platform, video_url)
                                 # print("Found video saved: %s %s" % (video_url, mention_identifier))
                         # Either way, the website has been successfully crawled and processed, and doesn't need to be crawled again.
-                        sqlite_helper.save_crawled(mention_identifier, "Success")
+                        sqlite_helper.save_crawled(mention_identifier)
                         # print("Saved as crawled: %s" % mention_identifier)
                 except Exception as e:
                     # The website was not successfully crawled, it should be tried again
@@ -105,7 +105,7 @@ def crawl_urls(filepath):
 
 def run():
     # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
-    mentions_path = os.environ["DATA_PATH"] + "/external/GDELT/mentions/"
+    mentions_path = os.environ["DATA_PATH"] + "/external/mentions/"
     files = glob.glob(mentions_path + "[0-9]*.mentions.csv.zip")
     pool = Pool(32)  # 16 seems to be around optimum
 

@@ -29,3 +29,4 @@ jupyter
 lxml
 graphviz
 psycopg2
+AsIs

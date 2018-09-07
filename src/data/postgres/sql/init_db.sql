@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS crawled_websites (
+CREATE TABLE IF NOT EXISTS articles (
   website_url TEXT NOT NULL,
   status      TEXT NOT NULL
 );
@@ -20,5 +20,5 @@ CREATE TABLE IF NOT EXISTS usable_videos (
   video_url   TEXT NOT NULL
 );
 
-CREATE INDEX crawled_websites_website_url ON crawled_websites (website_url);
+CREATE INDEX articles_website_url ON articles (website_url);
 CREATE INDEX found_videos_website_url ON found_videos (website_url);

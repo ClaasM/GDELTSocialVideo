@@ -1,6 +1,6 @@
 /*
 TODO
-CREATE INDEX crawled_websites_website_url ON crawled_websites (website_url);
+CREATE INDEX articles_website_url ON articles (website_url);
 CREATE TABLE IF NOT EXISTS found_videos (
   website_url TEXT NOT NULL,
   platform  TEXT NOT NULL,
