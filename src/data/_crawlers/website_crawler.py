@@ -29,7 +29,7 @@ from src.visualization.console import CrawlingProgress
 # Data availability is not a problem, so I'm only using articles that are 100% confident to be about the event
 # This increases relevance of the videos.
 CONFIDENCE_THRESHOLD = 100
-manager = PoolManager(10000)
+manager = PoolManager(100)
 crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=10000)
 
 
