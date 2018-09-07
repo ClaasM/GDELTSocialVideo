@@ -10,9 +10,9 @@ tmux a
 psql -U postgres -d thesis
 
 
-pg_dump -U postgres thesis > dump
-scp claas@vid-gpu1.inf.cs.cmu.edu:~/dump data/
-psql -U postgres thesis < data/dump
+pg_dump -U postgres thesis > dump_20180907
+scp claas@vid-gpu1.inf.cs.cmu.edu:~/dump_20180907 data/
+psql -U postgres thesis < data/dump_20180907
 
 Stopping, restarting postgres:
 pg_ctl -D /usr/local/var/postgres stop
@@ -107,4 +107,3 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
-
