@@ -117,9 +117,4 @@ def run():
 
 
 if __name__ == "__main__":
-    # Making sure the script restarts whenever the database connection is struggling
-    while True:
-        try:
-            run()
-        except psycopg2.OperationalError as e:
-            print("Run crashed: %s" % str(e))
+    run()
