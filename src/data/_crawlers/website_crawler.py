@@ -93,7 +93,7 @@ def crawl_urls(filepath):
                         # print("Saved as crawled: %s" % mention_identifier)
                 except Exception as e:
                     # The website was not successfully crawled, it should be tried again
-                    # print(e)
+                    print(e)
                     sqlite_helper.save_crawled(mention_identifier, str(e))
         index += 1
     # report the remaining, unreported read lines and
