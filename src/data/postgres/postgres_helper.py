@@ -19,7 +19,7 @@ class PostgresHelper:
         result = self.c.fetchone()
         # If the status is a 3 digit status code we don't crawl again since thats unlikely to change.
         # Any other issue (i.e. connectivity issues) lead to a re-crawl.
-        return result and len(result) > 0 and (result == SUCCESS or len(result[0]) == 3)
+        return result and len(result) > 0 and (result[0] == SUCCESS or len(result[0]) == 3)
 
         # return result and len(result) > 0 and result[0]==SUCCESS
 

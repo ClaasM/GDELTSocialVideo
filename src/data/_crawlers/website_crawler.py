@@ -59,6 +59,7 @@ def crawl_urls(filepath):
             # TODO pie chart of how many are URLS (split by MentionSourceName)
             # Also, mentions of an event with too little confidence are skipped.
             if sqlite_helper.is_crawled(mention_identifier):
+                print("Already crawled!")
                 # This website has already been successfully crawled.
                 # All the videos from that website, are now also associated with this Event ID.
                 # print("Already successfully crawled: %s" % mention_identifier)
@@ -68,6 +69,7 @@ def crawl_urls(filepath):
                     sqlite_helper.save_mention_with_video(global_event_id, mention_identifier)
                     # print("Already saved videos: %s" % mention_identifier)
             else:
+                print("Crawling...!")
                 # crawl the website.
                 # Whatever happens, the results is saved. This is useful information, because re-crawling is expensive.
                 try:
