@@ -15,11 +15,14 @@ class PostgresHelper:
 
     def is_crawled(self, website_url):
         """Checks if a website_url has already been successfully crawled."""
+        try_again = ['500', '403']
         self.c.execute('SELECT status FROM articles WHERE website_url=%s', [website_url])
         result = self.c.fetchone()
-        # If the status is a 3 digit status code we don't crawl again since thats unlikely to change.
+        # If the status is a 3 digit status code we don't crawl again since thats unlikely to change,
+        # except for those status codes that are marked as "try_again".
         # Any other issue (i.e. connectivity issues) lead to a re-crawl.
-        return result and len(result) > 0 and (result[0] == SUCCESS or len(result[0]) == 3 or "Too many open files" not in result[0])
+        # len(result[0]) == 3 or "Too many open files" not in result[0] TODO and also use not in try_again
+        return result and len(result) > 0 and (result[0] == SUCCESS or "leaderpost.com" not in website_url)
 
         # return result and len(result) > 0 and result[0]==SUCCESS
 
@@ -44,7 +47,6 @@ class PostgresHelper:
 
     def get_columns_where(self, table, columns, key, value):
         query = 'SELECT (%s) FROM %s WHERE %s=\'%s\'' % (','.join(columns), table, key, value)
-        print(query)
         self.c.execute(query)
         return self.c.fetchone()[0]
 

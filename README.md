@@ -14,9 +14,9 @@ pg_dump -U postgres thesis > dump
 scp claas@vid-gpu1.inf.cs.cmu.edu:~/dump data/
 psql -U postgres thesis < data/dump
 
-
-postgres -D /usr/local/var/postgres/
-
+Stopping, restarting postgres:
+pg_ctl -D /usr/local/var/postgres stop
+pg_ctl -D /usr/local/var/postgres start
 
 tmux:
 [: scrolling with up and down arrows

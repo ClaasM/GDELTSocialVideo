@@ -3,11 +3,16 @@ Crawls all websites from "mentions" and saves which websites were successfully c
 Saves each found embedded youtube video id to the database.
 Since crawling is I/O bound anyways, readability was prioritized over speed.
 Anything else is nonsense in Python anyways.
+
+Right now I've done multiple passes:
+- One with the pool
+- One without the pool, some sites don't handle
 """
 import csv
 import glob
 import io
 import os
+import urllib
 import zipfile
 from multiprocessing import Pool
 
@@ -29,8 +34,11 @@ from src.visualization.console import CrawlingProgress
 # Data availability is not a problem, so I'm only using articles that are 100% confident to be about the event
 # This increases relevance of the videos.
 CONFIDENCE_THRESHOLD = 100
-manager = PoolManager(100)
-crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=10000)
+# Increasing pool size to 1000 gives a slight performance boost but requires increasing the open file limit
+# https://www.ibm.com/support/knowledgecenter/en/SSRMWJ_6.0.0/com.ibm.isim.doc_6.0/trouble/cpt/cpt_ic_trouble_many_filesopen.htm
+# Sometimes, servers cannot handle connection pooling, so it is recommended to do a "second pass" without it.
+# connection_pool = PoolManager(100)
+crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH, update_every=100000)
 
 
 def crawl_urls(filepath):
@@ -71,7 +79,13 @@ def crawl_urls(filepath):
                 # crawl the website.
                 # Whatever happens, the results is saved. This is useful information, because re-crawling is expensive.
                 try:
-                    res = manager.request('GET', mention_identifier)
+                    # Sometimes, servers cannot handle connection pooling, so it is recommended to do a "second pass" without it.
+                    # res = connection_pool.request('GET', mention_identifier, headers={'User-Agent': 'Mozilla'})
+
+                    req =  urllib.request.Request(mention_identifier, headers={'User-Agent': 'Mozilla'})
+                    res = urllib.request.urlopen(req)
+                    res.data = res.read()
+
                     if res.status >= 300:
                         # The website was not successfully crawled, it should be tried again
                         # print(res.status)
@@ -79,8 +93,8 @@ def crawl_urls(filepath):
                     else:
                         bs = BeautifulSoup(res.data, features="lxml")
                         video_urls = list(website.get_video_sources_bs(bs))
-                        #et = etree.fromstring(res.data)
-                        #video_urls = list(website.get_video_sources_etree(et))
+                        # et = etree.fromstring(res.data)
+                        # video_urls = list(website.get_video_sources_etree(et))
                         # find video iframes and get their src attributes
                         if len(video_urls) > 0:
                             # This website has videos in it

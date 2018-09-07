@@ -53,6 +53,7 @@ if __name__ == "__main__":
     c.execute('SELECT DISTINCT hostname FROM found_videos')
     hosts = c.fetchall()
     for hostname in hosts:
+        #print(hostname)
         hostname = hostname[0]
         features = dict()
         features["hostname"] = hostname
@@ -79,7 +80,6 @@ if __name__ == "__main__":
 
         c.execute(postgres_helper.dict_insert_string("hosts",features))
         conn.commit()
-        print(hostname)
 
 
     # First, lets get all articles from each

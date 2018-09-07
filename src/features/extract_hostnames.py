@@ -8,16 +8,19 @@ TODO write documentation
 """
 
 if __name__ == "__main__":
+    tables = ["articles", "found_videos"]
     conn = psycopg2.connect(database="thesis", user="postgres")
     c = conn.cursor()
-    # Create the new column
-    c.execute('ALTER TABLE articles ADD COLUMN IF NOT EXISTS hostname TEXT')
-    conn.commit()
-    # We're only interested in hosts that had any video etc. in them
-    c.execute('SELECT * FROM articles')
-    for website_url, status, hostname in c.fetchall():
-        # Website url is not unique, but it doesn't matter in this case
-        new_hostname = urlparse(website_url).hostname
-        c.execute('UPDATE articles SET hostname=%s WHERE website_url=%s', [new_hostname, website_url])
-    conn.commit()
+    for table in tables:
+        # Create the new column
+        c.execute('ALTER TABLE %s ADD COLUMN IF NOT EXISTS hostname TEXT' % table)
+        conn.commit()
 
+        # We're only interested in hosts that had any video etc. in them
+        c.execute('SELECT website_url, hostname FROM %s' % table)
+        for (website_url, hostname) in c.fetchall():
+            # Website url may not be unique depending on the table, but it doesn't matter in this case
+            if not hostname:
+                new_hostname = urlparse(website_url).hostname
+                c.execute('UPDATE %s SET hostname=\'%s\' WHERE website_url=\'%s\'' % (table, new_hostname, website_url))
+                conn.commit()
