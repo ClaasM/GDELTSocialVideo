@@ -18,7 +18,7 @@ class PostgresHelper:
         # TODO  omitted for now. We don't try again yet.
         self.c.execute('SELECT status FROM articles WHERE website_url=%s', [website_url])
         result = self.c.fetchone()
-        return len(result) > 0 and result[0]==SUCCESS
+        return result and len(result) > 0 and result[0]==SUCCESS
 
     def has_videos(self, website_url):
         self.c.execute('SELECT 1 FROM found_videos WHERE website_url=%s LIMIT 1', [website_url])

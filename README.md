@@ -6,7 +6,10 @@ source ~/thesis/bin/activate
 python3 src/data/_crawlers/website_crawler.py
 slurm -i eth0
 top
+tmux a
 psql -U postgres -d thesis
+
+
 pg_dump -U postgres thesis > dump
 scp claas@vid-gpu1.inf.cs.cmu.edu:~/dump data/
 psql -U postgres thesis < /dump
