@@ -1,6 +1,7 @@
 """
-TODO this might be worth a separate package (or at least a gistl)
+TODO this might be worth a separate package (or at least a gist)
 TODO use carriage return
+TODO create a test that consumes std.out
 """
 import time
 from datetime import timedelta
@@ -13,8 +14,8 @@ COL_SEPARATOR = "|"
 ROW_SEPARATOR = "-"
 TIME_FORMAT = "%H:%M:%S"
 
-class CrawlingProgress:
 
+class CrawlingProgress:
     def __init__(self, total_count=1000, update_every=100000):
         # Variables that need to be synced across Threads
         self.count = Value('i', 0)
@@ -62,3 +63,24 @@ class CrawlingProgress:
 
     def time_str(self, seconds):
         return '%02d:%02d:%02d' % (seconds / 3600, seconds / 60 % 60, seconds % 60)
+
+
+class TablePrinter:
+    # TODO use this in CrawlingProgress
+    def __init__(self, header=None):
+        if header is None:
+            header = ["Col 1", "Col 2", "Col 3"]
+        print(self.row_string(header))
+        print(ROW_SEPARATOR * (len(COLUMNS) * COL_WIDTH + len(COLUMNS) - 1))
+
+    def print_row(self, row=None):
+        if row is None:
+            row = ["El1", "El2", "El3"]
+        print(self.row_string(row))
+
+    def row_string(self, values):
+        string = ""
+        for value in values[0:-1]:
+            string += str(value).center(COL_WIDTH) + COL_SEPARATOR
+        string += str(values[-1]).center(COL_WIDTH)
+        return string
