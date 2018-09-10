@@ -10,7 +10,7 @@ tmux a
 psql -U postgres -d thesis
 
 
-pg_dump -U postgres thesis > dump_20180909
+pg_dump -U postgres thesis > dump_20180910
 scp claas@vid-gpu1.inf.cs.cmu.edu:~/dump_20180909 data/
 psql -U postgres thesis < data/dump_20180909
 
