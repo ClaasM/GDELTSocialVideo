@@ -10,9 +10,9 @@ tmux a
 psql -U postgres -d thesis
 
 
-pg_dump -U postgres thesis > dump_20180907
-scp claas@vid-gpu1.inf.cs.cmu.edu:~/dump_20180907 data/
-psql -U postgres thesis < data/dump_20180907
+pg_dump -U postgres thesis > dump_20180909
+scp claas@vid-gpu1.inf.cs.cmu.edu:~/dump_20180909 data/
+psql -U postgres thesis < data/dump_20180909
 
 Stopping, restarting postgres:
 pg_ctl -D /usr/local/var/postgres stop

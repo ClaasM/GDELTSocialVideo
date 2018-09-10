@@ -26,7 +26,7 @@ from src.data.postgres import postgres_helper
 if __name__ == "__main__":
     conn = psycopg2.connect(database="thesis", user="postgres")
     c = conn.cursor()
-    # Create the new column
+    # Create the new table
     c.execute('DROP TABLE IF EXISTS hosts')
     c.execute('''CREATE TABLE hosts (
         hostname TEXT,
@@ -48,6 +48,10 @@ if __name__ == "__main__":
         youtube_relevant BOOL,
         facebook_relevant BOOL
     )''')
+    # Create indices if they do not exist to speed things up a little
+    c.execute('''CREATE INDEX IF NOT EXISTS articles_hostname_index ON public.articles (hostname);''')
+    c.execute('''CREATE INDEX IF NOT EXISTS articles_found_videos_index ON public.found_videos (hostname);''')
+
     conn.commit()
     # We're only interested in hosts that had any video etc. in them
     c.execute('SELECT DISTINCT hostname FROM found_videos')
