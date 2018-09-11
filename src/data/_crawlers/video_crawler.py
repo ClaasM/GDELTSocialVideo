@@ -8,9 +8,6 @@ from src.data.videos import video
 from src.data.postgres.postgres_helper import PostgresHelper
 
 raw_video_path = os.environ["DATA_PATH"] + "/raw/GDELT/videos/"
-raw_article_path = os.environ["DATA_PATH"] + "/raw/GDELT/articles/"
-GDELT_path = os.environ["DATA_PATH"] + "/external/GDELT/"
-
 
 def download_yt_video(row):
     website_url, video_url = row

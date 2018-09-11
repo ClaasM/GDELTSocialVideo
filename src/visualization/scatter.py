@@ -13,20 +13,26 @@ def scatter_2D(ax, x, y, color, clf=None, x_label="X", y_label="Y", title="2D Sc
     :return:
     """
     if clf is not None:
-        x_min, x_max = x.min() - 1, x.max() + 1
-        y_min, y_max = y.min() - 1, y.max() + 1
+        x_range = x.max() - x.min()
+        y_range = y.max() - y.min()
+        x_padding = x_range * 0.1
+        y_padding = y_range * 0.1
+        x_min, x_max = x.min() - x_padding, x.max() + x_padding
+        y_min, y_max = y.min() - y_padding, y.max() + y_padding
         # We want a 100x100 grid
-        x_stepsize, y_stepsize = (x_max - x_min) / 100, (y_max - y_min) / 100
-        xx, yy = np.meshgrid(np.arange(x_min, x_max, x_stepsize),
-                             np.arange(y_min, y_max, y_stepsize))
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, x_range / 100),
+                             np.arange(y_min, y_max, y_range / 100))
 
         Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
         Z = Z.reshape(xx.shape)
-        ax.contourf(xx, yy, Z, alpha=0.5)
+        Z_proba = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
+        Z_proba = Z_proba.reshape(xx.shape)
+
+        ax.contourf(xx, yy, Z_proba, cmap=plt.get_cmap("RdBu"), alpha=0.5)
         ax.set_xlim(xx.min(), xx.max())
         ax.set_ylim(yy.min(), yy.max())
 
-    ax.scatter(x, y, c=color, s=20, edgecolors='k')
+    ax.scatter(x, y, c=color, cmap=plt.get_cmap("RdBu"))
 
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
