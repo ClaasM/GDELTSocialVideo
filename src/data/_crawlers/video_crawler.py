@@ -7,7 +7,10 @@ from src.data.videos import video
 
 from src.data.postgres.postgres_helper import PostgresHelper
 
-raw_video_path = os.environ["DATA_PATH"] + "/raw/GDELT/videos/"
+platform = "youtube"
+resolution = "lowest_res"
+raw_video_path = os.environ["DATA_PATH"] + "/raw/GDELT/videos/%s/%s/" % (platform, resolution)
+os.mkdir(raw_video_path)
 
 def download_yt_video(row):
     website_url, video_url = row
