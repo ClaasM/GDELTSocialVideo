@@ -64,6 +64,9 @@ class CrawlingProgress:
     def time_str(self, seconds):
         return '%02d:%02d:%02d' % (seconds / 3600, seconds / 60 % 60, seconds % 60)
 
+    def set_total_count(self, total_count):
+        self.total_count = total_count
+
 
 class TablePrinter:
     # TODO use this in CrawlingProgress

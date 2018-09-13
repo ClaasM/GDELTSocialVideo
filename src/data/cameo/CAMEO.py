@@ -253,6 +253,8 @@ L3 = {
     "1125": "Accuse of espionage, treason",
     "1211": "Reject economic cooperation",
     "1212": "Reject military cooperation",
+    "1213": "Reject judicial cooperation",
+    "1214": "Reject intelligence cooperation",
     "1221": "Reject request for economic aid",
     "1222": "Reject request for military aid",
     "1223": "Reject request for humanitarian aid",

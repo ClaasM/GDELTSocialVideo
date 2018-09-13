@@ -253,3 +253,7 @@ def get_video_sources_etree(etree):
                     if "href" in sub_element.attrib:
                         if re.search(TWITTER_IDENTIFIER_REGEX, sub_element.attrib["href"]):
                             yield "twitter", sub_element.attrib["href"]
+
+
+def get_path(url):
+    return os.environ["DATA_PATH"] + "/raw/GDELT/articles/%s" % urllib.parse.quote_plus(url)

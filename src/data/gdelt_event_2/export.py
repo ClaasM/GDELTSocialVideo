@@ -61,5 +61,5 @@ def get_file_path(year=2018, month=7, day=3, hour=15, quarter=0):
     :param quarter:
     :return:
     """
-    return "%s/external/GDELT/%04d%02d%02d%02d%02d00.export.CSV.zip" % (
+    return "%s/external/export/%04d%02d%02d%02d%02d00.export.CSV.zip" % (
         os.environ["DATA_PATH"], year, month, day, hour, quarter * 15)
