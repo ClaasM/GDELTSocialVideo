@@ -91,7 +91,8 @@ c.execute('''CREATE TABLE all_export (
 );''')
 
 # We need some indices to speed things up
-c.execute('''CREATE INDEX IF NOT EXISTS all_export_global_event_id_index ON public.all_mentions (global_event_id);''')
+c.execute('''CREATE INDEX all_export_global_event_id_index ON public.all_export (global_event_id);''')
+c.execute('''CREATE INDEX all_export_source_url_index ON public.all_export (source_url);''')
 
 conn.commit()
 

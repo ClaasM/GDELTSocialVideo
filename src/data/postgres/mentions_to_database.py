@@ -34,7 +34,9 @@ c.execute('''CREATE TABLE all_mentions (
   null_2 TEXT  --Postgres COPY cannot ignore columns in CSVs.
 );''')
 # We need some indices to speed things up
-c.execute('''CREATE INDEX IF NOT EXISTS all_mentions_global_event_id_index ON public.all_mentions (global_event_id);''')
+c.execute('''CREATE INDEX all_mentions_global_event_id_index ON public.all_mentions (global_event_id);''')
+c.execute('''CREATE INDEX all_mentions_mention_identifier_index ON public.all_mentions (mention_identifier);''')
+
 
 conn.commit()
 
@@ -51,6 +53,7 @@ for file_path in files:
         tmp_file = tmp.name
     # Put the csv into the database
     query = "COPY all_mentions FROM '%s' DELIMITER E'\t' CSV HEADER" % tmp_file
+    print(query)
     c.execute(query)
     conn.commit()
     # Delete the temporary file
