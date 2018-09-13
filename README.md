@@ -44,11 +44,11 @@ Check internet speed:
 curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -
 
 
-SQLite:
+# Troubleshooting:
 
-apt install..
-sqlite data/interim/GDELT.db
-.read src/data/init_db.sql
+The number of columns might change.
+Some files are missing in GDELT (these scripts handle that correctly)
+
 
 master_thesis
 ==============================

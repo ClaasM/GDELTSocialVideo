@@ -40,7 +40,6 @@ conn.commit()
 
 # Import every mentions CSV file
 mentions_path = os.environ["DATA_PATH"] + "/external/mentions/"
-unzipped_path = os.environ["DATA_PATH"] + "/interim/unzipped/"
 files = glob.glob(mentions_path + "[0-9]*.mentions.csv.zip")
 for file_path in files:
     archive = zipfile.ZipFile(file_path)
