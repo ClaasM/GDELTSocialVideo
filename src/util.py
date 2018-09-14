@@ -37,6 +37,16 @@ def save_gzip_pickle(path, object):
         pickle.dump(object, file)
 
 
+def load_gzip_html(path):
+    with gzip.open(path, "rb") as file:
+        return file.read().decode("utf-8")
+
+
+def save_gzip_html(path, html):
+    with gzip.open(path, "wb+") as file:
+        file.write(html.encode("utf-8"))
+
+
 def append_line(path, line):
     with gzip.open(path, "w+") as outfile:
         outfile.write(line + "\n")
@@ -45,8 +55,9 @@ def append_line(path, line):
 def get_filename_from_url(url):
     return url.split("/")[-1]
 
+
 def is_url(string):
     if validators.url(string):
         return True
     else:
-        return False # We just want boolean values, no ValidationFailure objects
+        return False  # We just want boolean values, no ValidationFailure objects

@@ -7,31 +7,25 @@ import os
 from multiprocessing.pool import Pool
 
 import psycopg2
-from urllib3 import PoolManager
+import requests
+from requests import HTTPError
 
 from src.data.websites import website
 from src.visualization.console import CrawlingProgress
 
-import urllib3
-
-urllib3.disable_warnings()
-
-connection_pool = PoolManager(100)
 crawling_progress = CrawlingProgress(0, update_every=1000)
 
 
 def crawl_url(url):
     if not os.path.exists(website.get_path(url)):
         try:
-            # Sometimes, servers cannot handle connection pooling, so it is recommended to do a "second pass" without it.
-            res = connection_pool.request('GET', url, headers={'User-Agent': 'Mozilla'})
-            if res.status >= 300:
-                print(res.status)
+            res = requests.get(url, headers={"user-agent": "Mozilla"})
+            if res.status_code > 300:
+                print(res.status_code)
             else:
-                print(str(res.status)  + url)
-                pass
-                # TODO extract the article from res.data using boilerpipe
-        except Exception as e:
+                html = res.text
+                website.save(html, url)
+        except HTTPError as e:
             # The website was not successfully crawled, it should be tried again
             print(e)
     crawling_progress.inc(by=1)

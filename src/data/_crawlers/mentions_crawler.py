@@ -7,6 +7,9 @@ Anything else is nonsense in Python anyways.
 Right now I've done multiple passes:
 - One with the pool
 - One without the pool, some sites don't handle
+
+
+TODO extract
 """
 import csv
 import glob

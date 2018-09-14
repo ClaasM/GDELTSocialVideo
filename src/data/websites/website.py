@@ -14,7 +14,7 @@ from src import util
 
 # from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
 
-raw_path = os.environ["DATA_PATH"] + "/raw/articles/"
+raw_path = os.environ["DATA_PATH"] + "/raw/GDELT/articles/"
 sentences_path = os.environ["DATA_PATH"] + "/interim/sentences/"
 sentences_english_path = os.environ["DATA_PATH"] + "/interim/sentences_english/"
 tokens_path = os.environ["DATA_PATH"] + "/processed/tokens/"
@@ -257,3 +257,13 @@ def get_video_sources_etree(etree):
 
 def get_path(url):
     return os.environ["DATA_PATH"] + "/raw/GDELT/articles/%s" % urllib.parse.quote_plus(url)
+
+
+def save(data, url):
+    filename = urllib.parse.quote_plus(url)
+    util.save_gzip_html(os.path.join(raw_path, filename), data)
+
+
+def load(url):
+    filename = urllib.parse.quote_plus(url)
+    return util.load_gzip_html(os.path.join(raw_path, filename))
