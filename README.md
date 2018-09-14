@@ -1,3 +1,32 @@
+# GDELT Articles & Amateur Video Extraction
+
+This project can be used to extract Youtube videos, Facebook videos and Twitter tweets (plus attached videos, if any)
+from the articles in the GDELT dataset.
+More than a crawler, it also classifies and only downloads those videos which are relevant to the article,
+to ensure a high quality dataset.
+
+## Getting Started
+
+### Prerequisites
+
+### Extracting
+
+For a link to a already finished dataset, containing articles and all relevant videos in the articles, scroll down.
+You can also find the intermediary results for each step of the data acquisition there.
+
+**For the source relevancy classifier (see below) to work, you need at least ~1M crawled articles. Otherwise there will not be enough articles/videos per source to classify it.**
+
+
+
+
+
+## Source classification
+
+Not all sources (hosts, e.g. [cnn.com](cnn.com)) have videos in their articles that are relevant to the article.
+For example, a website might have a "recommended videos"-section, the contents of which are irrelevant to the article.
+A classifier was trained on a manually labeled set of sources to filter these out, with an accuracy of >95%.
+More information on how that was achieved can be found in my thesis. TODO link
+
 Getting started:
 
 ssh claas@vid-gpu1.inf.cs.cmu.edu
@@ -10,7 +39,7 @@ tmux a
 psql -U postgres -d thesis
 
 
-pg_dump -U postgres thesis > dump_20180910
+pg_dump -U postgres thesis > data/other/database_backups/dump_20180914
 scp claas@vid-gpu1.inf.cs.cmu.edu:~/dump_20180909 data/
 psql -U postgres thesis < data/dump_20180909
 
