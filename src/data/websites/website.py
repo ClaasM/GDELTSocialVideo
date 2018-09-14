@@ -259,8 +259,19 @@ def get_path(url):
     return os.environ["DATA_PATH"] + "/raw/GDELT/articles/%s" % urllib.parse.quote_plus(url)
 
 
+def url_encode(url):
+    """
+    Makes a url safe to be used as a URL-parameter or filename.
+    :param url:
+    :return:
+    """
+    return urllib.parse.quote_plus(url)
+
+def url_decode(filename):
+    return urllib.parse.unquote_plus(filename)
+
 def save(data, url):
-    filename = urllib.parse.quote_plus(url)
+    filename = url_encode(url)
     util.save_gzip_html(os.path.join(raw_path, filename), data)
 
 

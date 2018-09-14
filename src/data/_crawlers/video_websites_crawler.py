@@ -25,7 +25,7 @@ def crawl_url(url):
             else:
                 html = res.text
                 website.save(html, url)
-        except HTTPError as e:
+        except Exception as e:
             # The website was not successfully crawled, it should be tried again
             print(e)
     crawling_progress.inc(by=1)

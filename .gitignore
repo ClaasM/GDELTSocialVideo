@@ -19,7 +19,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
+src/boilerpipe/build/
 develop-eggs/
 dist/
 downloads/
@@ -91,3 +91,6 @@ target/
 
 # Mac OS-specific storage files
 .DS_Store
+
+/src/python-boilerpipe
+/src/boilerpipe
