@@ -164,7 +164,7 @@ html_static_path = ['_static']
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'master_thesisdoc'
+htmlhelp_basename = 'gdelt_social_videodoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------

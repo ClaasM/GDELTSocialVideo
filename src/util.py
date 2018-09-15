@@ -52,8 +52,7 @@ def append_line(path, line):
         outfile.write(line + "\n")
 
 
-def get_filename_from_url(url):
-    return url.split("/")[-1]
+
 
 
 def is_url(string):

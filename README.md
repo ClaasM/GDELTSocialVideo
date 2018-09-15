@@ -27,6 +27,13 @@ For example, a website might have a "recommended videos"-section, the contents o
 A classifier was trained on a manually labeled set of sources to filter these out, with an accuracy of >95%.
 More information on how that was achieved can be found in my thesis. TODO link
 
+
+
+TODO examples how to get articles for a video, etc.
+TODO export are acutally the events, they were just called export for
+
+
+
 Getting started:
 
 ssh claas@vid-gpu1.inf.cs.cmu.edu

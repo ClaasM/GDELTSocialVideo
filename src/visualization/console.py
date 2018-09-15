@@ -35,7 +35,7 @@ class CrawlingProgress:
         string += str(values[-1]).center(COL_WIDTH)
         return string
 
-    def inc(self, by):
+    def inc(self, by=1):
         with self.count.get_lock():
             self.count.value += by
             if self.count.value - self.last_count.value >= self.update_every:

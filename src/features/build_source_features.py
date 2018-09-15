@@ -26,30 +26,6 @@ from src.data.postgres import postgres_helper
 if __name__ == "__main__":
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
-    # Create the new table
-    c.execute('DROP TABLE IF EXISTS hosts')
-    c.execute('''CREATE TABLE hosts (
-        hostname TEXT,
-        article_count INT,
-        
-        twitter_video_std_dev FLOAT,
-        twitter_video_sum INT,
-        twitter_video_count INT,
-        twitter_video_sum_distinct INT,
-        
-        youtube_video_std_dev FLOAT,
-        youtube_video_sum INT,
-        youtube_video_count INT,
-        youtube_video_sum_distinct INT,
-        
-        facebook_video_std_dev FLOAT,
-        facebook_video_sum INT,
-        facebook_video_count INT,
-        facebook_video_sum_distinct INT
-    )''')
-    # Create indices if they do not exist to speed things up a little
-    c.execute('''CREATE INDEX IF NOT EXISTS articles_hostname_index ON public.articles (hostname);''')
-    c.execute('''CREATE INDEX IF NOT EXISTS articles_found_videos_index ON public.found_videos (hostname);''')
 
     conn.commit()
     # We're only interested in hosts that had any video etc. in them
@@ -59,11 +35,7 @@ if __name__ == "__main__":
         # print(hostname)
         hostname = hostname[0]
         features = dict()
-        features["hostname"] = hostname
-
-        # Get article count from that hostname:
-        c.execute('SELECT Count(*) FROM articles WHERE hostname=%s', [hostname])
-        features["article_count"] = c.fetchone()[0]
+        # article_count is already computed in when the db is populated
 
         # Get all videos from that hostname:
         c.execute('SELECT * FROM found_videos WHERE hostname=%s', [hostname])

@@ -135,3 +135,7 @@ def run():
 
 if __name__ == "__main__":
     run()
+
+# TODO POPULATE THE ARTICLES TABLE  c.execute("INSERT INTO articles (source_url) VALUES (%s) ON CONFLICT DO NOTHING", [mention_identifier])
+# TODO POPULATE THE SOURCES TABLE
+# TODO remember not everything is a URL
