@@ -24,7 +24,7 @@ from itertools import groupby
 from src.data.postgres import postgres_helper
 
 if __name__ == "__main__":
-    conn = psycopg2.connect(database="thesis", user="postgres")
+    conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     # Create the new table
     c.execute('DROP TABLE IF EXISTS hosts')

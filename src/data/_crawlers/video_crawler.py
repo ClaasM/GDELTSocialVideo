@@ -52,7 +52,7 @@ def download_yt_video(video):
 
 def run():
     # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
-    conn = psycopg2.connect(database="thesis", user="postgres")
+    conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     c.execute(
         """SELECT found_videos.video_url FROM (found_videos

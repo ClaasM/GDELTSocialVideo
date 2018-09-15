@@ -15,7 +15,7 @@ import shutil
 
 import src  # Needed s.t. DATA_PATH is set
 
-conn = psycopg2.connect(database="thesis", user="postgres")
+conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
 c = conn.cursor()
 
 # Import every export CSV file

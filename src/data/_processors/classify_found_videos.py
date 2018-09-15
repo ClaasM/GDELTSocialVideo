@@ -17,7 +17,7 @@ if __name__ == "__main__":
     clf_path = os.environ["MODEL_PATH"] + "svmrbf_1536694057"
     trained_on = ["youtube_video_std_dev", "youtube_video_distinct_to_sum"]
 
-    conn = psycopg2.connect(database="thesis", user="postgres")
+    conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     # Create the new column
     c.execute('ALTER TABLE hosts ADD COLUMN IF NOT EXISTS %s_relevant BOOL' % platform)

@@ -78,12 +78,6 @@ curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.p
 The number of columns might change.
 Some files are missing in GDELT (these scripts handle that correctly)
 
-
-master_thesis
-==============================
-
-Master thesis for TUM informatics, written at Carnegie Mellon University
-
 Project Organization
 ------------
 
@@ -136,3 +130,5 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+
+*Part of* Master thesis for TUM informatics, written at Carnegie Mellon University

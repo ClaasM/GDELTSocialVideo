@@ -10,7 +10,7 @@ from psycopg2.extensions import AsIs
 
 class PostgresHelper:
     def __init__(self, ):
-        self.conn = psycopg2.connect(database="thesis", user="postgres")
+        self.conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
         self.c = self.conn.cursor()
 
     def is_crawled(self, website_url):

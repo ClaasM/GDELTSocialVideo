@@ -39,7 +39,7 @@ def run():
     videos_path = os.environ["DATA_PATH"] + "/raw/GDELT/videos/%s/%s/random1000/" % (platform, resolution)
     video_files = glob.glob(os.path.join(videos_path, "*.mp4"))  # TODO replace all with path.join
 
-    conn = psycopg2.connect(database="thesis", user="postgres")
+    conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
 
     urls_to_crawl = set()

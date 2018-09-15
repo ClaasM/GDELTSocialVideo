@@ -10,7 +10,7 @@ from random import shuffle
 from src.visualization import console
 
 if __name__ == "__main__":
-    conn = psycopg2.connect(database="thesis", user="postgres")
+    conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS labeled_hosts (
                   hostname TEXT,

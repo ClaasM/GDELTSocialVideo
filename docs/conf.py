@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# master_thesis documentation build configuration file, created by
+# gdelt_social_video documentation build configuration file, created by
 # sphinx-quickstart.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -41,7 +41,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'master_thesis'
+project = u'gdelt_social_video'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -184,8 +184,8 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
     ('index',
-     'master_thesis.tex',
-     u'master_thesis Documentation',
+     'gdelt_social_video.tex',
+     u'gdelt_social_video Documentation',
      u"Claas Meiners", 'manual'),
 ]
 
@@ -215,7 +215,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'master_thesis', u'master_thesis Documentation',
+    ('index', 'gdelt_social_video', u'gdelt_social_video Documentation',
      [u"Claas Meiners"], 1)
 ]
 
@@ -229,9 +229,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'master_thesis', u'master_thesis Documentation',
-     u"Claas Meiners", 'master_thesis',
-     'Master thesis for TUM informatics, written at Carnegie Mellon University', 'Miscellaneous'),
+    ('index', 'gdelt_social_video', u'gdelt_social_video Documentation',
+     u"Claas Meiners", 'gdelt_social_video',
+     'Part of Master thesis for TUM informatics, written at Carnegie Mellon University', 'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

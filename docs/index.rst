@@ -1,9 +1,9 @@
-.. master_thesis documentation master file, created by
+.. gdelt_social_video documentation master file, created by
    sphinx-quickstart.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-master_thesis documentation!
+gdelt_social_video documentation!
 ==============================================
 
 Contents:

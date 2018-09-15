@@ -9,7 +9,7 @@ TODO write documentation
 
 if __name__ == "__main__":
     tables = ["articles", "found_videos"]
-    conn = psycopg2.connect(database="thesis", user="postgres")
+    conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     for table in tables:
         # Create the new column
