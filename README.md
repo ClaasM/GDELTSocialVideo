@@ -54,9 +54,9 @@ To get status on the crawling:
 SELECT left(crawling_status, 14), count(left(crawling_status, 14)) FROM articles GROUP BY left(crawling_status, 14) ORDER BY count(left(crawling_status, 14)) DESC;
 
 Reset crawling:
-TODO
 UPDATE articles SET crawling_status='Not Crawled' WHERE crawling_status <> 'Not Crawled';
-(then execute init_db again)
+DELETE FROM videos
+DELETE FROM sources;
 
 **For the source relevancy classifier (see below) to work, you need at least ~1M crawled articles. Otherwise there will not be enough articles/videos per source to classify it.**
 
