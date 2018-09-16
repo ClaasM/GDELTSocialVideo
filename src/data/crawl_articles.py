@@ -11,7 +11,7 @@ Right now I've done multiple passes:
 
 TODO extract
 """
-from multiprocessing.dummy import Pool
+from multiprocessing import Pool
 
 import psycopg2
 import requests
@@ -56,7 +56,7 @@ def run():
     crawling_progress = CrawlingProgress(len(articles), update_every=1000)
     # parallel crawling and parsing to speed things up
     with Pool(16)  as pool:  # 16 seems to be around optimum
-        for (index, status, videos) in pool.imap_unordered(crawl_article, enumerate(articles), chunksize=1000):
+        for (index, status, videos) in pool.imap_unordered(crawl_article, enumerate(articles), chunksize=100):
             source_url = articles[index][0]
             source_name = articles[index][1]
             # Update article crawling status
