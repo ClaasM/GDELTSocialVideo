@@ -9,6 +9,25 @@ to ensure a high quality dataset.
 
 ### Prerequisites
 
+git clone https://github.com/ClaasM/GDELTSocialVideo.git
+
+pip install -r requirements.txt
+### Initialization
+
+psql -U postgres
+CREATE DATABASE gdelt_social_video;
+
+cd GDELTSocialVideo
+
+psql -U postgres -d gdelt_social_video -f src/data/init_db.sql
+
+wget  -P data/external "http://data.gdeltproject.org/gdeltv2/masterfilelist.txt"
+
+python3 src/data/download_GDELT.py
+
+python3 src/data/populate_db.py
+
+
 ### Extracting
 
 For a link to a already finished dataset, containing articles and all relevant videos in the articles, scroll down.

@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS mentions (
 
 CREATE TABLE IF NOT EXISTS articles (
   source_url      TEXT NOT NULL, -- Those are the mention_identifiers that are url's (they not always are, see GDELT docs)
-  source_name     TEXT NOT NULL,
+  source_name TEXT, -- This is sometimes null (dataset impurities)
   crawling_status TEXT DEFAULT 'Not Crawled',
 
   PRIMARY KEY (source_url) -- Primary keys are automatically indexed

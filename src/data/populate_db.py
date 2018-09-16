@@ -37,6 +37,7 @@ def run():
             exit("Table %s already has rows!" % table)
     print("OK")
 
+    '''
     """ IMPORT "EXPORT" DATASET (1/2) """
 
     print(" IMPORTING 'EXPORT' DATA (1/2) ".center(77, "="))
@@ -52,7 +53,7 @@ def run():
 
     # Add the columns to "catch" the null values at the end of each line in the CSVs
     # Postgres COPY cannot specify which columns to import, its all or nothing. These are dropped at the end of the script.
-    c.execute('''ALTER TABLE mentions ADD COLUMN null_1 TEXT, ADD COLUMN null_2 TEXT''')
+    c.execute('ALTER TABLE mentions ADD COLUMN null_1 TEXT, ADD COLUMN null_2 TEXT')
     conn.commit()
 
     print(" IMPORTING 'MENTIONS' DATA (2/2) ".center(77, "="))
@@ -67,7 +68,7 @@ def run():
     # Drop the empty columns again
     c.execute('ALTER TABLE mentions DROP COLUMN null_1, DROP COLUMN null_2')
     conn.commit()
-
+'''
     """ CREATE "ARTICLES" TABLE """
 
     print(" CREATING 'ARTICLES' TABLE (3/3) ".center(77, "="))
@@ -82,7 +83,7 @@ def run():
         if util.is_url(mention_identifier):
             c.execute("""INSERT INTO articles (source_url, source_name) VALUES (%s, %s)
                           ON CONFLICT (source_url) DO NOTHING""", [mention_identifier, mention_source_name])
-    conn.commit()
+            conn.commit()
 
     # The sources tables are populated during crawling (because we only keep those sources with videos)
 
