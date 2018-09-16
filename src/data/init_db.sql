@@ -105,12 +105,13 @@ CREATE TABLE IF NOT EXISTS mentions (
 
 CREATE TABLE IF NOT EXISTS articles (
   source_url      TEXT NOT NULL, -- Those are the mention_identifiers that are url's (they not always are, see GDELT docs)
+  source_name     TEXT NOT NULL,
   crawling_status TEXT DEFAULT 'Not Crawled',
 
   PRIMARY KEY (source_url) -- Primary keys are automatically indexed
 );
 
-CREATE TABLE IF NOT EXISTS found_videos (
+CREATE TABLE IF NOT EXISTS videos (
   source_url TEXT NOT NULL,
   platform   TEXT NOT NULL,
   video_url  TEXT NOT NULL,
@@ -120,8 +121,9 @@ CREATE TABLE IF NOT EXISTS found_videos (
 );
 
 CREATE TABLE  IF NOT EXISTS sources (
-  source_name                 TEXT,
-  article_count               INT,
+  source_name                 TEXT NOT NULL,
+  article_count               INT DEFAULT 0,
+  -- Features are computed later
   twitter_video_std_dev       FLOAT,
   twitter_video_sum           INT,
   twitter_video_count         INT,
@@ -134,7 +136,7 @@ CREATE TABLE  IF NOT EXISTS sources (
   facebook_video_sum          INT,
   facebook_video_count        INT,
   facebook_video_sum_distinct INT,
-
+  -- Relevancy is determined by the classifier
   twitter_relevant            BOOL,
   youtube_relevant            BOOL,
   facebook_relevant           BOOL,
@@ -154,12 +156,12 @@ CREATE INDEX IF NOT EXISTS  events_source_url_index
   ON public.events (source_url);
 CREATE INDEX IF NOT EXISTS  articles_crawling_status_index
   ON public.articles (crawling_status);
-CREATE INDEX IF NOT EXISTS  found_videos_platform_index
-  ON public.found_videos (platform);
-CREATE INDEX IF NOT EXISTS  found_videos_video_url_index
-  ON public.found_videos (video_url);
-CREATE INDEX IF NOT EXISTS  found_videos_video_id_index
-  ON public.found_videos (video_id);
+CREATE INDEX IF NOT EXISTS  videos_platform_index
+  ON public.videos (platform);
+CREATE INDEX IF NOT EXISTS  videos_video_url_index
+  ON public.videos (video_url);
+CREATE INDEX IF NOT EXISTS  videos_video_id_index
+  ON public.videos (video_id);
 CREATE INDEX IF NOT EXISTS  source_twitter_relevant_index
   ON sources (twitter_relevant);
 CREATE INDEX IF NOT EXISTS  source_youtube_relevant_index

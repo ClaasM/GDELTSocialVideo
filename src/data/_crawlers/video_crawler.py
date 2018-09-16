@@ -25,7 +25,7 @@ def download_yt_video(video):
     url = video[0]
     try:
         # Extract the video_id
-        video_id = video_helper.get_id_from_yt_url(url)
+        video_id = video_helper.get_id_from_youtube_url(url)
         # If it's already downloaded, do nothing
         if glob.glob(os.path.join(raw_video_path, video_id) + "*"):
             logging.info("Already Downloaded: " + url)

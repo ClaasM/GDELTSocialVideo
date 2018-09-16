@@ -7,7 +7,7 @@ import zipfile
 import psycopg2
 
 from src.visualization.console import CrawlingProgress
-
+from src import util
 
 def zipped_csv_to_db(file_path, table, cursor):
     archive = zipfile.ZipFile(file_path)
@@ -31,7 +31,7 @@ def run():
     """ MAKE SURE TABLES ARE EMPTY """
 
     print("Making sure tables are empty...", end='')
-    for table in ["articles", "sources"]:
+    for table in ["articles"]: # TODO "events", "mentions"
         c.execute("""SELECT * FROM %s LIMIT 1""" % table)
         if len(c.fetchall()) != 0:
             exit("Table %s already has rows!" % table)
@@ -39,7 +39,7 @@ def run():
 
     """ IMPORT "EXPORT" DATASET (1/2) """
 
-    print("IMPORTING 'EXPORT' DATA ".center(77, "="))
+    print(" IMPORTING 'EXPORT' DATA (1/2) ".center(77, "="))
     files = glob.glob(os.environ["DATA_PATH"] + "/external/export/[0-9]*.export.csv.zip")
     crawling_progress = CrawlingProgress(total_count=len(files), update_every=100)  # Keep track of progress
     for file_path in files:
@@ -48,14 +48,14 @@ def run():
         conn.commit()
         crawling_progress.inc()
 
-    """ IMPORT "MENTIONS" DATASET (2/2) """
+    """ IMPORT "MENTIONS" DATASET """
 
     # Add the columns to "catch" the null values at the end of each line in the CSVs
     # Postgres COPY cannot specify which columns to import, its all or nothing. These are dropped at the end of the script.
     c.execute('''ALTER TABLE mentions ADD COLUMN null_1 TEXT, ADD COLUMN null_2 TEXT''')
     conn.commit()
 
-    print(" IMPORTING 'MENTIONS' DATA ".center(77, "="))
+    print(" IMPORTING 'MENTIONS' DATA (2/2) ".center(77, "="))
     files = glob.glob(os.environ["DATA_PATH"] + "/external/mentions/[0-9]*.mentions.csv.zip")
     crawling_progress = CrawlingProgress(total_count=len(files), update_every=100)  # Keep track of progress
     for file_path in files:
@@ -68,7 +68,24 @@ def run():
     c.execute('ALTER TABLE mentions DROP COLUMN null_1, DROP COLUMN null_2')
     conn.commit()
 
-    # The articles and sources tables are populated during crawling
+    """ CREATE "ARTICLES" TABLE """
+
+    print(" CREATING 'ARTICLES' TABLE (3/3) ".center(77, "="))
+    mentions_cursor = conn.cursor()
+    mentions_cursor.execute("SELECT mention_identifier, mention_source_name  FROM mentions")
+    c.execute("SELECT Count(1) FROM mentions")
+    crawling_progress = CrawlingProgress(total_count=c.fetchone()[0], update_every=100000)  # Keep track of progress
+    for article in mentions_cursor:
+        crawling_progress.inc()
+        mention_identifier, mention_source_name = article
+        # Mentions are not always from a website, so MentionIdentifier is not always a URL. Those that aren't are skipped.
+        if util.is_url(mention_identifier):
+            c.execute("""INSERT INTO articles (source_url, source_name) VALUES (%s, %s)
+                          ON CONFLICT (source_url) DO NOTHING""", [mention_identifier, mention_source_name])
+    conn.commit()
+
+    # The sources tables are populated during crawling (because we only keep those sources with videos)
+
 
 if __name__ == "__main__":
     run()

@@ -8,7 +8,7 @@ TODO maybe it makes more sense to move this to util.video
 """
 
 
-def get_id_from_yt_url(url):
+def get_id_from_youtube_url(url):
     """
     Not failsafe (its not supposed to be)
     :param url:
@@ -25,3 +25,11 @@ def get_id_from_yt_url(url):
         return occurrences[0]
     else:
         raise ValueError("Invalid URL: %s" % url)
+
+def get_id_from_twitter_url(url):
+    # TODO implement
+    return ""
+
+def get_id_from_facebook_url(url):
+    # TODO implement
+    return ""
