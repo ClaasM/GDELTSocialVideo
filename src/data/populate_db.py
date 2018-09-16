@@ -18,6 +18,10 @@ def zipped_csv_to_db(file_path, table, cursor):
         shutil.copyfileobj(file, tmp)
         # write the unzipped csv to the database
         tmp_file = tmp.name
+    # Make sure the database has access to the file
+    umask = os.umask(0)
+    os.umask(umask)
+    os.chmod(tmp_file, 0o666 & ~umask)
     # Put the csv into the database using postgres COPY
     query = "COPY %s FROM '%s' DELIMITER E'\t' CSV HEADER" % (table, tmp_file)
     cursor.execute(query)
