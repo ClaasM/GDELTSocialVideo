@@ -5,6 +5,11 @@ from the articles in the GDELT dataset.
 More than a crawler, it also classifies and only downloads those videos which are relevant to the article,
 to ensure a high quality dataset.
 
+
+To drop all tables:
+DROP TABLE articles, events, mentions, sources, videos CASCADE;
+
+
 ## Getting Started
 
 ### Prerequisites

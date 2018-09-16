@@ -9,6 +9,7 @@ import psycopg2
 from src.visualization.console import CrawlingProgress
 from src import util
 
+
 def zipped_csv_to_db(file_path, table, cursor):
     archive = zipfile.ZipFile(file_path)
     # Unzip the file to a temporary csv
@@ -31,13 +32,12 @@ def run():
     """ MAKE SURE TABLES ARE EMPTY """
 
     print("Making sure tables are empty...", end='')
-    for table in ["articles"]: # TODO "events", "mentions"
+    for table in ["articles"]:  # TODO "events", "mentions"
         c.execute("""SELECT * FROM %s LIMIT 1""" % table)
         if len(c.fetchall()) != 0:
             exit("Table %s already has rows!" % table)
     print("OK")
 
-    '''
     """ IMPORT "EXPORT" DATASET (1/2) """
 
     print(" IMPORTING 'EXPORT' DATA (1/2) ".center(77, "="))
@@ -68,7 +68,7 @@ def run():
     # Drop the empty columns again
     c.execute('ALTER TABLE mentions DROP COLUMN null_1, DROP COLUMN null_2')
     conn.commit()
-'''
+
     """ CREATE "ARTICLES" TABLE """
 
     print(" CREATING 'ARTICLES' TABLE (3/3) ".center(77, "="))
@@ -85,7 +85,7 @@ def run():
                           ON CONFLICT (source_url) DO NOTHING""", [mention_identifier, mention_source_name])
             conn.commit()
 
-    # The sources tables are populated during crawling (because we only keep those sources with videos)
+            # The sources tables are populated during crawling (because we only keep those sources with videos)
 
 
 if __name__ == "__main__":
