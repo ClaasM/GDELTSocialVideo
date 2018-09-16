@@ -20,6 +20,8 @@ sentences_english_path = os.environ["DATA_PATH"] + "/interim/sentences_english/"
 tokens_path = os.environ["DATA_PATH"] + "/processed/tokens/"
 processed_path = os.environ["DATA_PATH"] + "/processed/sentences/"
 
+if not os.path.exists(raw_path):
+    os.makedirs(raw_path)
 
 def download_and_save(row):
     """
