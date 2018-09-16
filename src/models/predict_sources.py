@@ -11,10 +11,9 @@ import pickle
 import psycopg2
 from src import util
 
-if __name__ == "__main__":
-
+def run():
     platform = "youtube"  # Only doing this for youtube now
-    clf_path = os.environ["MODEL_PATH"] + "svmrbf_1536694057"
+    clf_path = os.path.join(os.environ["MODEL_PATH"], "svmrbf_1536694057")
     trained_on = ["youtube_video_std_dev", "youtube_video_distinct_to_sum"]
 
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
@@ -47,14 +46,18 @@ if __name__ == "__main__":
     print(len(hosts))
 
     # Load the classifier
-    clf = pickle.load(open(clf_path,"rb"))
+    clf = pickle.load(open(clf_path, "rb"))
     prediction = clf.predict(hosts[trained_on])
-    classifications = {True:0, False:0}
+    classifications = {True: 0, False: 0}
     for index, row in hosts.iterrows():
         # print(platform, prediction[index], row["hostname"])
         # Website url may not be unique depending on the table, but it doesn't matter in this case
-        classifications[prediction[index]]+=1
+        classifications[prediction[index]] += 1
         c.execute('UPDATE hosts SET %s_relevant=%s WHERE hostname=\'%s\''
                   % (platform, prediction[index], row["hostname"]))
         conn.commit()
     print(classifications)
+
+if __name__ == "__main__":
+    run()
+

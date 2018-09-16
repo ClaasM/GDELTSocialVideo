@@ -9,13 +9,13 @@ from pytube import YouTube
 from pytube.exceptions import RegexMatchError
 import logging
 from src.data.videos import video as video_helper
-from src.visualization.console import CrawlingProgress
+from src.visualization.console import SyncedCrawlingProgress
 
 length_cuttoff = 3600  # Nothing longer than an hour
 size_cutoff = 10000000000  # Nothing above 10 GB
 platform = "youtube"
 resolution = "lowest_res"
-raw_video_path = os.environ["DATA_PATH"] + "/raw/GDELT/videos/%s/%s/random1000" % (platform, resolution)
+raw_video_path = os.environ["DATA_PATH"] + "/raw/videos/%s/%s/random1000" % (platform, resolution)
 os.makedirs(raw_video_path, exist_ok=True)
 
 logging.basicConfig(filename=os.path.join(raw_video_path, '%d.log' % time.time()), level=logging.DEBUG)
@@ -63,7 +63,7 @@ def run():
     shuffle(videos)
     videos = videos[:1000]
     pool = Pool(4)
-    crawling_progress = CrawlingProgress(len(videos), update_every=10)
+    crawling_progress = SyncedCrawlingProgress(len(videos), update_every=10)
     for _ in pool.imap_unordered(download_yt_video, videos):
         crawling_progress.inc(by=1)
     pool.close()

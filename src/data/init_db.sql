@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS mentions (
   event_time_date     BIGINT NOT NULL,
   mention_time_date   BIGINT NOT NULL,
   mention_type        INT    NOT NULL,
-  mention_source_name TEXT, -- This is sometimes null (dataset impurities)
+  mention_source_name TEXT, -- This is sometimes null (GDELT dataset impurities)
   mention_identifier  TEXT   NOT NULL,
   sentence_id         INT    NOT NULL,
   actor1_char_offset  INT    NOT NULL,
@@ -105,24 +105,26 @@ CREATE TABLE IF NOT EXISTS mentions (
 
 CREATE TABLE IF NOT EXISTS articles (
   source_url      TEXT NOT NULL, -- Those are the mention_identifiers that are url's (they not always are, see GDELT docs)
-  source_name TEXT, -- This is sometimes null (dataset impurities)
+  source_name TEXT, -- This is sometimes null (GDELT dataset impurities)
   crawling_status TEXT DEFAULT 'Not Crawled',
 
   PRIMARY KEY (source_url) -- Primary keys are automatically indexed
 );
 
 CREATE TABLE IF NOT EXISTS videos (
-  source_url TEXT NOT NULL,
-  platform   TEXT NOT NULL,
-  video_url  TEXT NOT NULL,
-  video_id   TEXT NOT NULL, --the video_id is extracted from the url to make querying for it faster.
+  source_url      TEXT NOT NULL,
+  source_name     TEXT, -- This is sometimes null (GDELT dataset impurities)
+  platform        TEXT NOT NULL,
+  video_url       TEXT NOT NULL,
+  video_id        TEXT, --the video_id is extracted from the url when crawling it (to make querying for it faster).
+  crawling_status TEXT DEFAULT 'Not Crawled',
 
   FOREIGN KEY (source_url) REFERENCES articles (source_url)
 );
 
 CREATE TABLE  IF NOT EXISTS sources (
   source_name                 TEXT NOT NULL,
-  article_count               INT DEFAULT 0,
+  article_count               INT DEFAULT 1,
   -- Features are computed later
   twitter_video_std_dev       FLOAT,
   twitter_video_sum           INT,
@@ -162,6 +164,8 @@ CREATE INDEX IF NOT EXISTS  videos_video_url_index
   ON public.videos (video_url);
 CREATE INDEX IF NOT EXISTS  videos_video_id_index
   ON public.videos (video_id);
+CREATE INDEX IF NOT EXISTS  videos_source_name_index
+  ON public.videos (source_name);
 CREATE INDEX IF NOT EXISTS  source_twitter_relevant_index
   ON sources (twitter_relevant);
 CREATE INDEX IF NOT EXISTS  source_youtube_relevant_index

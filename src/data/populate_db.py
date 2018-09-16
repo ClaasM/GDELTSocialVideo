@@ -6,7 +6,7 @@ import zipfile
 
 import psycopg2
 
-from src.visualization.console import CrawlingProgress
+from src.visualization.console import SyncedCrawlingProgress
 from src import util
 
 
@@ -39,7 +39,7 @@ def run():
     else:
         print(" IMPORTING 'EXPORT' DATA (1/2) ".center(77, "="))
         files = glob.glob(os.environ["DATA_PATH"] + "/external/export/[0-9]*.export.csv.zip")
-        crawling_progress = CrawlingProgress(total_count=len(files), update_every=100)  # Keep track of progress
+        crawling_progress = SyncedCrawlingProgress(total_count=len(files), update_every=100)  # Keep track of progress
         for file_path in files:
             # put the csv into the database
             zipped_csv_to_db(file_path, "events", c)
@@ -59,11 +59,10 @@ def run():
 
         print(" IMPORTING 'MENTIONS' DATA (2/2) ".center(77, "="))
         files = glob.glob(os.environ["DATA_PATH"] + "/external/mentions/[0-9]*.mentions.csv.zip")
-        crawling_progress = CrawlingProgress(total_count=len(files), update_every=100)  # Keep track of progress
+        crawling_progress = SyncedCrawlingProgress(total_count=len(files), update_every=100)  # Keep track of progress
         for file_path in files:
             # put the csv into the database
             zipped_csv_to_db(file_path, "mentions", c)
-            conn.commit()
             crawling_progress.inc()
 
         # Drop the empty columns again
@@ -80,7 +79,7 @@ def run():
         mentions_cursor = conn.cursor()
         mentions_cursor.execute("SELECT mention_identifier, mention_source_name  FROM mentions")
         c.execute("SELECT Count(1) FROM mentions")
-        crawling_progress = CrawlingProgress(total_count=c.fetchone()[0], update_every=100000)  # Keep track of progress
+        crawling_progress = SyncedCrawlingProgress(total_count=c.fetchone()[0], update_every=100000)  # Keep track of progress
         for article in mentions_cursor:
             crawling_progress.inc()
             mention_identifier, mention_source_name = article

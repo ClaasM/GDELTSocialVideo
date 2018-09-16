@@ -11,9 +11,9 @@ import requests
 from requests import HTTPError
 
 from src.data.websites import website
-from src.visualization.console import CrawlingProgress
+from src.visualization.console import SyncedCrawlingProgress
 
-crawling_progress = CrawlingProgress(0, update_every=1000)
+crawling_progress = SyncedCrawlingProgress(0, update_every=1000)
 
 
 def crawl_url(url):
@@ -36,7 +36,7 @@ def run():
     resolution = "lowest_res"
 
     # TODO maybe do this in the videos module
-    videos_path = os.environ["DATA_PATH"] + "/raw/GDELT/videos/%s/%s/random1000/" % (platform, resolution)
+    videos_path = os.environ["DATA_PATH"] + "/raw/videos/%s/%s/random1000/" % (platform, resolution)
     video_files = glob.glob(os.path.join(videos_path, "*.mp4"))  # TODO replace all with path.join
 
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")

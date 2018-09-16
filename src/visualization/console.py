@@ -15,7 +15,7 @@ ROW_SEPARATOR = "-"
 TIME_FORMAT = "%H:%M:%S"
 
 
-class CrawlingProgress:
+class SyncedCrawlingProgress:
     def __init__(self, total_count=1000, update_every=100000):
         # Variables that need to be synced across Threads
         self.count = Value('i', 0)
@@ -87,3 +87,55 @@ class TablePrinter:
             string += str(value).center(COL_WIDTH) + COL_SEPARATOR
         string += str(values[-1]).center(COL_WIDTH)
         return string
+
+
+# TODO dry with the other CrawlingProgress
+class CrawlingProgress:
+    def __init__(self, total_count=1000, update_every=100000):
+        # Variables that need to be synced across Threads
+        self.count = 0
+        self.last_time = time.time()
+        self.last_count = 0
+
+        self.start_time = time.time()
+        self.update_every = update_every
+        self.total_count = total_count
+        print(self.row_string(COLUMNS))
+        print(ROW_SEPARATOR * (len(COLUMNS) * COL_WIDTH + len(COLUMNS) - 1))
+
+    def row_string(self, values):
+        string = ""
+        for value in values[0:-1]:
+            string += str(value).center(COL_WIDTH) + COL_SEPARATOR
+        string += str(values[-1]).center(COL_WIDTH)
+        return string
+
+    def inc(self, by=1):
+        self.count += by
+        if self.count - self.last_count >= self.update_every:
+            # Print update
+            self.print_update()
+            # Then update relevant variables
+            self.last_count = self.count
+            self.last_time = time.time()
+
+    def print_update(self):
+        # Prints current number, total number, percentage, runtime, increase per second, expected remaining runtime
+        percentage = self.count / self.total_count * 100
+        runtime = time.time() - self.start_time
+        increases_per_second = (self.count - self.last_count) / (time.time() - self.last_time)
+        expected_remaining_runtime = (self.total_count - self.count) / increases_per_second
+
+        print(self.row_string([self.count,
+                               self.total_count,
+                               "%02.0d%%" % percentage,
+                               self.time_str(runtime),
+                               "%.02f" % increases_per_second,
+                               self.time_str(expected_remaining_runtime)
+                               ]))
+
+    def time_str(self, seconds):
+        return '%02d:%02d:%02d' % (seconds / 3600, seconds / 60 % 60, seconds % 60)
+
+    def set_total_count(self, total_count):
+        self.total_count = total_count

@@ -4,8 +4,8 @@ import os
 from src.boilerpipe.extract import Extractor
 from src.util import load_gzip_html
 
-articles_path = os.environ["DATA_PATH"] + "/raw/GDELT/articles/"
-text_path = os.environ["DATA_PATH"] + "/raw/GDELT/articles_text/"
+articles_path = os.environ["DATA_PATH"] + "/raw/articles/"
+text_path = os.environ["DATA_PATH"] + "/interim/articles_text/"
 
 
 # Create the text dir if it does not exist yet

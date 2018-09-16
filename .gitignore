@@ -3,10 +3,6 @@
 /.idea/
 .DS_Store*
 
-
-/darknet
-/Mask_RCNN
-
 # By cookiecutter:
 
 # Byte-compiled / optimized / DLL files

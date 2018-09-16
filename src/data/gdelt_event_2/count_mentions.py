@@ -4,10 +4,10 @@ from multiprocessing.pool import Pool
 
 import pandas as pd
 
-from src.visualization.console import CrawlingProgress
+from src.visualization.console import SyncedCrawlingProgress
 from src import constants
 
-crawling_progress = CrawlingProgress(constants.GDELT_MENTIONS_LENGTH)
+crawling_progress = SyncedCrawlingProgress(constants.GDELT_MENTIONS_LENGTH)
 
 def count_lines(file):
     file_count = 0
