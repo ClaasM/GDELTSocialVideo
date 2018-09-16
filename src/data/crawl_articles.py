@@ -53,10 +53,10 @@ def run():
     # Only crawl articles that have not yet been crawled
     c.execute("SELECT source_url, source_name FROM articles WHERE crawling_status <> 'Success'")
     articles = c.fetchall()
-    crawling_progress = CrawlingProgress(len(articles), update_every=1000)
+    crawling_progress = CrawlingProgress(len(articles), update_every=10000)
     # parallel crawling and parsing to speed things up
     with Pool(32)  as pool:  # 16 seems to be around optimum
-        for (index, status, videos) in pool.imap_unordered(crawl_article, enumerate(articles), chunksize=300):
+        for (index, status, videos) in pool.imap_unordered(crawl_article, enumerate(articles), chunksize=100):
             source_url = articles[index][0]
             source_name = articles[index][1]
             # Update article crawling status
