@@ -77,7 +77,7 @@ def run():
     else:
         print(" CREATING 'ARTICLES' TABLE (3/3) ".center(77, "="))
         mentions_cursor = conn.cursor()
-        mentions_cursor.execute("SELECT mention_identifier, mention_source_name  FROM mentions")
+        mentions_cursor.execute("SELECT mention_identifier, mention_source_name  FROM mentions WHERE mention_source_name NOTNULL")
         c.execute("SELECT Count(1) FROM mentions")
         crawling_progress = SyncedCrawlingProgress(total_count=c.fetchone()[0], update_every=100000)  # Keep track of progress
         for article in mentions_cursor:

@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS mentions (
 
 CREATE TABLE IF NOT EXISTS articles (
   source_url      TEXT NOT NULL, -- Those are the mention_identifiers that are url's (they not always are, see GDELT docs)
-  source_name TEXT, -- This is sometimes null (GDELT dataset impurities)
+  source_name     TEXT NOT NULL,
   crawling_status TEXT DEFAULT 'Not Crawled',
 
   PRIMARY KEY (source_url) -- Primary keys are automatically indexed
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS articles (
 
 CREATE TABLE IF NOT EXISTS videos (
   source_url      TEXT NOT NULL,
-  source_name     TEXT, -- This is sometimes null (GDELT dataset impurities)
+  source_name     TEXT NOT NULL,
   platform        TEXT NOT NULL,
   video_url       TEXT NOT NULL,
   video_id        TEXT, --the video_id is extracted from the url when crawling it (to make querying for it faster).
