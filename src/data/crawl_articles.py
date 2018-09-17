@@ -1,15 +1,9 @@
 """
-Crawls all websites from "mentions" and saves which websites were successfully crawled and to which event id they belong.
-Saves each found embedded youtube video id to the database.
+Crawls all articles and saves which articles were successfully crawled.
+Saves each found embedded youtube or facebook video and twitter tweets to the database.
 Since crawling is I/O bound anyways, readability was prioritized over speed.
 Anything else is nonsense in Python anyways.
 
-Right now I've done multiple passes:
-- One with the pool
-- One without the pool, some sites don't handle
-
-
-TODO extract
 """
 from multiprocessing import Pool
 
