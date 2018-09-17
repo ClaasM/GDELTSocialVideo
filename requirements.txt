@@ -32,7 +32,7 @@ graphviz
 psycopg2
 AsIs
 seaborn
-
+htmlmin
 
 # Boilerpipe stuff
 # TODO Make sure boilerpipe setup.py is executed correctly

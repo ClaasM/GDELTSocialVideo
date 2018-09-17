@@ -16,6 +16,7 @@ from multiprocessing import Pool
 import psycopg2
 import requests
 import urllib3
+import htmlmin
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from bs4 import BeautifulSoup
@@ -24,6 +25,7 @@ from src.visualization.console import CrawlingProgress
 
 ''' Some intialization TODO use the separating comments from the BA '''
 
+minifier = htmlmin.Minifier(remove_comments=True, remove_all_empty_space=True, reduce_boolean_attributes=True, remove_empty_space=True)
 
 def crawl_article(article):
     index, (article_url, source_name) = article
@@ -39,7 +41,7 @@ def crawl_article(article):
             videos = list(website.get_video_sources_bs(bs))
             if len(videos) > 0:
                 # This website has videos in it, so it is saved
-                website.save(bs.text, article_url)
+                website.save(minifier.minify(bs.text), article_url)
     except Exception as e:
         # The website was not successfully crawled, it should be tried again
         status = str(e)
