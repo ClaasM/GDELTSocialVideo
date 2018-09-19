@@ -60,3 +60,9 @@ def dict_insert_string(table, _dict):
     columns = _dict.keys()
     values = [_dict[column] for column in columns]
     return 'insert into %s (%s) values %s' % (table, AsIs(','.join(columns)), tuple(values))
+
+def dict_set_string(_dict):
+    set_str = ""
+    for key in _dict.keys():
+        set_str += str(key) + "=" + str(_dict[key]) + ","
+    return set_str[:-1]

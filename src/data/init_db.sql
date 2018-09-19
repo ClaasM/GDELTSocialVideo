@@ -126,18 +126,18 @@ CREATE TABLE  IF NOT EXISTS sources (
   source_name                 TEXT NOT NULL,
   article_count               INT DEFAULT 1,
   -- Features are computed later
-  twitter_video_std_dev       FLOAT,
-  twitter_video_sum           INT,
-  twitter_video_count         INT,
-  twitter_video_sum_distinct  INT,
-  youtube_video_std_dev       FLOAT,
-  youtube_video_sum           INT,
-  youtube_video_count         INT,
-  youtube_video_sum_distinct  INT,
-  facebook_video_std_dev      FLOAT,
-  facebook_video_sum          INT,
-  facebook_video_count        INT,
-  facebook_video_sum_distinct INT,
+  twitter_std_dev       FLOAT,
+  twitter_sum           INT,
+  twitter_count         INT,
+  twitter_sum_distinct  INT,
+  youtube_std_dev       FLOAT,
+  youtube_sum           INT,
+  youtube_count         INT,
+  youtube_sum_distinct  INT,
+  facebook_std_dev      FLOAT,
+  facebook_sum          INT,
+  facebook_count        INT,
+  facebook_sum_distinct INT,
   -- Relevancy is determined by the classifier
   twitter_relevant            BOOL,
   youtube_relevant            BOOL,
@@ -160,10 +160,6 @@ CREATE INDEX IF NOT EXISTS  articles_crawling_status_index
   ON public.articles (crawling_status);
 CREATE INDEX IF NOT EXISTS  videos_platform_index
   ON public.videos (platform);
-CREATE INDEX IF NOT EXISTS  videos_video_url_index
-  ON public.videos (video_url);
-CREATE INDEX IF NOT EXISTS  videos_video_id_index
-  ON public.videos (video_id);
 CREATE INDEX IF NOT EXISTS  videos_source_name_index
   ON public.videos (source_name);
 CREATE INDEX IF NOT EXISTS  source_twitter_relevant_index
