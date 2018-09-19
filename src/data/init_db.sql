@@ -111,15 +111,19 @@ CREATE TABLE IF NOT EXISTS articles (
   PRIMARY KEY (source_url) -- Primary keys are automatically indexed
 );
 
-CREATE TABLE IF NOT EXISTS videos (
+-- Join table with some additional required information
+CREATE TABLE IF NOT EXISTS article_videos (
   source_url      TEXT NOT NULL,
   source_name     TEXT NOT NULL,
   platform        TEXT NOT NULL,
   video_url       TEXT NOT NULL,
-  video_id        TEXT, --the video_id is extracted from the url when crawling it (to make querying for it faster).
-  crawling_status TEXT DEFAULT 'Not Crawled',
 
   FOREIGN KEY (source_url) REFERENCES articles (source_url)
+);
+
+CREATE TABLE IF NOT EXISTS videos (
+  video_id        TEXT, --the video_id is extracted from the url when crawling it (to make querying for it faster).
+  crawling_status TEXT DEFAULT 'Not Crawled',
 );
 
 CREATE TABLE  IF NOT EXISTS sources (
@@ -158,10 +162,10 @@ CREATE INDEX IF NOT EXISTS  events_source_url_index
   ON public.events (source_url);
 CREATE INDEX IF NOT EXISTS  articles_crawling_status_index
   ON public.articles (crawling_status);
-CREATE INDEX IF NOT EXISTS  videos_platform_index
-  ON public.videos (platform);
-CREATE INDEX IF NOT EXISTS  videos_source_name_index
-  ON public.videos (source_name);
+CREATE INDEX IF NOT EXISTS  article_videos_platform_index
+  ON public.article_videos (platform);
+CREATE INDEX IF NOT EXISTS  article_videos_source_name_index
+  ON public.article_videos (source_name);
 CREATE INDEX IF NOT EXISTS  source_twitter_relevant_index
   ON sources (twitter_relevant);
 CREATE INDEX IF NOT EXISTS  source_youtube_relevant_index

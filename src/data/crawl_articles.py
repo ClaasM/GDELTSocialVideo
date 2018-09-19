@@ -63,7 +63,7 @@ def run():
                 c.execute("INSERT INTO sources (source_name)  VALUES (%s) ON CONFLICT (source_name) DO UPDATE SET article_count = sources.article_count + 1", [source_name])
                 # ...Save all the found videos to the database
                 for platform, video_url in videos:
-                    c.execute("""INSERT INTO videos (source_url, source_name, platform, video_url)
+                    c.execute("""INSERT INTO article_videos (source_url, source_name, platform, video_url)
                                   VALUES (%s, %s, %s, %s)""", [source_url, source_name, platform, video_url])
             conn.commit()
             crawling_progress.inc(1)

@@ -55,7 +55,7 @@ SELECT left(crawling_status, 14), count(left(crawling_status, 14)) FROM articles
 
 Reset crawling:
 UPDATE articles SET crawling_status='Not Crawled' WHERE crawling_status <> 'Not Crawled';
-DELETE FROM videos
+DELETE FROM article_videos
 DELETE FROM sources;
 
 **For the source relevancy classifier (see below) to work, you need at least ~1M crawled articles. Otherwise there will not be enough articles/videos per source to classify it.**

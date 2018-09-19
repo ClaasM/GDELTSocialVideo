@@ -43,11 +43,11 @@ def run():
 
         for platform in ["twitter", "youtube", "facebook"]:
             # Get all videos from that source, of that platform:
-            c.execute('SELECT * FROM videos WHERE source_name=%s AND platform=%s', [source, platform])
+            c.execute('SELECT * FROM article_videos WHERE source_name=%s AND platform=%s', [source, platform])
             videos = c.fetchall()
 
             # Get the count of each article
-            c.execute('SELECT Count(1) FROM videos WHERE source_name=%s AND platform=%s GROUP BY source_url',
+            c.execute('SELECT Count(1) FROM article_videos WHERE source_name=%s AND platform=%s GROUP BY source_url',
                       [source, platform])
             video_counts = c.fetchall()
 
