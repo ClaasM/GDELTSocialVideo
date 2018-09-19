@@ -35,7 +35,7 @@ def crawl_article(article):
             videos = list(website.get_video_sources_bs(bs))
             if len(videos) > 0:
                 # This website has videos in it, so it is saved
-                website.save(minifier.minify(bs.text), article_url)
+                website.save(minifier.minify(res.text), article_url)
     except Exception as e:
         # The website was not successfully crawled, it should be tried again
         status = str(e)
