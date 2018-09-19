@@ -33,6 +33,7 @@ psycopg2
 AsIs
 seaborn
 htmlmin
+tqdm
 
 # Boilerpipe stuff
 # TODO Make sure boilerpipe setup.py is executed correctly

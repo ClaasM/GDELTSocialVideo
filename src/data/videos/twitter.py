@@ -2,25 +2,21 @@
 Adaption from
 https://github.com/h4ckninja/twitter-video-downloader/blob/master/twitter-video-downloader.py
 """
+import json
 import os
-import shutil
+import re
+import urllib.parse
 
+import m3u8
 import requests
 from bs4 import BeautifulSoup
-import json
-import urllib.parse
-import m3u8
-from pathlib import Path
-import re
 
 from src.data.videos import video as video_helper
 
-reply_count_selector = "div.permalink-tweet-container div.ProfileTweet-action--reply span.ProfileTweet-actionCountForPresentation"
-retweets_count_selector = "div.permalink-tweet-container div.ProfileTweet-action--retweet span.ProfileTweet-actionCountForPresentation"
-favorite_count_selector = "div.permalink-tweet-container div.ProfileTweet-action--favorite span.ProfileTweet-actionCountForPresentation"
+length_cuttoff = 3600  # Nothing longer than an hour
+size_cutoff = 10000000000  # Nothing above 10 GB
 
-
-def download(tweet_id, resolution="lowest_res"):
+def download(tweet_id):
     """
 
     :param tweet_id:
@@ -30,8 +26,7 @@ def download(tweet_id, resolution="lowest_res"):
     ret = dict()
 
     try:
-        # TODO If it turns out lowest_res is sufficient, get rid of it altogether
-        video_path = video_helper.get_path("twitter", resolution)
+        video_path = video_helper.get_path("twitter")
 
         # Get an authorization and a guest Token by extracting it from the Twitter source code
         video_player_url = 'https://twitter.com/i/videos/tweet/' + tweet_id
@@ -97,6 +92,15 @@ def download(tweet_id, resolution="lowest_res"):
         print(e)
         ret["crawling_status"] = str(e)
     return ret
+
+
+
+def get_id_from_url(url):
+    # https://twitter.com/georgrestle/status/1036668593520476160?ref_src=twsrc%5Etfw"
+    # TODO implement
+    return ""
+
+
 
 
 tweet_with_video = "1041730759613046787"

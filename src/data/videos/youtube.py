@@ -2,71 +2,72 @@
 Adaption from
 https://github.com/h4ckninja/twitter-video-downloader/blob/master/twitter-video-downloader.py
 """
+import json
 import os
-import shutil
+import re
+import urllib.parse
 
+import m3u8
 import requests
 from bs4 import BeautifulSoup
-import json
-import urllib.parse
-import m3u8
-from pathlib import Path
-import re
+from pytube import YouTube
 
-from src import util
+from src.data.videos import video as video_helper
 
-def download(tweet_id, video_path):
+length_cuttoff = 3600  # Nothing longer than an hour
+size_cutoff = 10000000000  # Nothing above 10 GB
+
+
+def download(youtube_video_id):
+	ret = dict()
+
 	try:
-		video_player_url_prefix = 'https://twitter.com/i/videos/tweet/'
-		platform = "twitter"
-		resolution = "lowest_res" # If it turns out lowest_res is sufficient, get rid of it altogether
+		video_path = video_helper.get_path("twitter")
 
-		# Grab the video client HTML
-		video_player_url = video_player_url_prefix + tweet_id
-		video_player_response = requests.get(video_player_url)
+		# The ID, extracted from the embedding url, is put into the normal yt-url scheme.
+		yt_url = "www.youtube.com/watch?v=%s" % video_id
+		yt = YouTube(yt_url)
 
-		# Get the JS file with the Bearer token to talk to the API.
-		# Twitter really changed things up.
-		js_file_soup = BeautifulSoup(video_player_response.text, 'lxml')
-		js_file_url = js_file_soup.find('script')['src']
-		js_file_response = requests.get(js_file_url)
+		ret["duration"] = yt.length # TODO is this ms?
 
-		# Pull the bearer token out (this way, we're not restricted in API Access)
-		bearer_token_pattern = re.compile('Bearer ([a-zA-Z0-9%-])+')
-		bearer_token = bearer_token_pattern.search(js_file_response.text)
-		bearer_token = bearer_token.group(0)
-
-		# Talk to the API to get the m3u8 URL
-		player_config = requests.get('https://api.twitter.com/1.1/videos/tweet/config/' + tweet_id + '.json', headers={'Authorization': bearer_token})
-		m3u8_url_get = json.loads(player_config.text)
-		m3u8_url_get = m3u8_url_get['track']['playbackUrl']
-
-		#print(json.loads(player_config.text))
-
-		# Get m3u8
-		m3u8_response = requests.get(m3u8_url_get, headers = {'Authorization': bearer_token})
-		m3u8_url_parse = urllib.parse.urlparse(m3u8_url_get)
-		video_host = m3u8_url_parse.scheme + '://' + m3u8_url_parse.hostname
-		m3u8_parse = m3u8.loads(m3u8_response.text)
-
-		if m3u8_parse.is_variant:
-			lowest_res = sorted(m3u8_parse.playlists, lambda video: video.stream_info.resolution[0])[0]
-
-			ts_m3u8_response = requests.get(video_host + lowest_res.uri)
-			ts_m3u8_parse = m3u8.loads(ts_m3u8_response.text)
-
-			with open(os.path.join(video_path, tweet_id), 'ab+') as wfd:
-				for ts_uri in ts_m3u8_parse.segments.uri:
-					ts_file = requests.get(video_host + ts_uri)
-					wfd.write(ts_file.content)
-
-			return "Success"
-		return "Not is_variant"
+		if int(yt.length) <= length_cuttoff:
+			stream = yt.streams \
+				.filter(progressive=True, file_extension='mp4') \
+				.order_by('resolution') \
+				.asc() \
+				.first()
+			if stream.filesize <= size_cutoff:
+				stream.download(output_path=video_path, filename=youtube_video_id)
+				ret["crawling_status"] = "Success"
+			else:
+				ret["crawling_status"] = "Too big (%d)" % stream.filesize
+		else:
+			ret["crawling_status"] = "Too long"
 	except Exception as e:
-		return str(e)
+		ret["crawling_status"] = str(e)
+
+	return ret
 
 
-
+def get_id_from_url(url):
+    """
+    :param url:
+    :return:
+    """
+    # https://www.youtube.com/embed/ZdLMtnNkHvQ?rel=0
+    # https://www.youtube.com/embed/ZdLMtnNkHvQ/?rel=0
+    # https://www.youtube.com/embed/v=Z2iuL__9a-U?rel=0
+    # //www.youtube.com/embed/?wmode=opaque&hd=1&autoplay=0&showinfo=0&controls=0&rel=0
+    # https://www.youtube.com/embed//oTyhk1lgZDg?wmode=transparent&start=0
+    try:
+        should_be_id = re.split("/embed[/]+", url)[-1].split("/")[0].split("?")[0]
+        occurrences = re.findall("[A-Za-z0-9_-]{11}", should_be_id)
+        if len(occurrences) == 1:
+            return occurrences[0]
+        else:
+            return "Wrong number of occurrences (%d)" % len(occurrences)
+    except Exception as e:
+        return str(e)
 
 tweet_with_video = "1041730759613046787"
 tweet_with_video_and_audio = "1041782784782589952"
