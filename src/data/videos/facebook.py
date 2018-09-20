@@ -18,14 +18,12 @@ length_cuttoff = 3600  # Nothing longer than an hour
 size_cutoff = 10000000000  # Nothing above 10 GB
 
 
-def download(facebook_video_id):
+def download(facebook_video_id, user_name):
     ret = dict()
 
     try:
         video_path = video_helper.get_path("facebook")
-
-        url = "https://www.facebook.com/theweeklytv/videos/" + facebook_video_id
-
+        url = "https://www.facebook.com/%s/videos/%s" % (user_name, facebook_video_id)
         res = requests.get(url, timeout=5, allow_redirects=True)
         if res.status_code != 200:
             ret["crawling_status"] = res.status_code
@@ -38,7 +36,6 @@ def download(facebook_video_id):
 
             # Alternatively, theres also hd_src and both with _no_ratelimit postfix
             mp4_url = re.findall("sd_src:\"(.*?)\",", res.text)[0]
-            print(mp4_url)
             r = requests.get(mp4_url, stream=True)
             with open(os.path.join(video_path, facebook_video_id + ".mp4"), 'wb+') as file:
                 for chunk in r.iter_content(chunk_size=1024):
@@ -48,16 +45,17 @@ def download(facebook_video_id):
             ret["crawling_status"] = "Success"
     except (HTTPError, ConnectionError):
         ret["crawling_status"] = "Invalid URL"
-    # except Exception as e:
-    #    print(e)
-    #    ret["crawling_status"] = str(e)
+    except Exception as e:
+        print(facebook_video_id, e)
+        ret["crawling_status"] = str(e)
     return ret
 
 
 def get_id_from_url(url):
     parsed = urllib.parse.urlparse(url)
     video_url = urllib.parse.parse_qs(parsed.query)['href'][0]
-    return video_url.split("/")[-2]  # Theres a trailing slash
+    parts = video_url.split("/")
+    return parts[-2], parts[-4]  # Theres a trailing slash, plus we also need the username in this case.
 
 embedding_url = "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Ftheweeklytv%2Fvideos%2F2142588782656547%2F&show_text=0&width=476"
 
