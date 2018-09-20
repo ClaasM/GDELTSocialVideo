@@ -43,7 +43,7 @@ def run():
 
         for platform in ["twitter", "youtube", "facebook"]:
             # Get all videos from that source, of that platform:
-            c.execute('SELECT * FROM article_videos WHERE source_name=%s AND platform=%s', [source, platform])
+            c.execute('SELECT video_url FROM article_videos WHERE source_name=%s AND platform=%s', [source, platform])
             videos = c.fetchall()
 
             # Get the count of each article
@@ -54,7 +54,7 @@ def run():
             features[platform + "_std_dev"] = np.std(video_counts) if len(video_counts) > 0 else -1
             features[platform + "_count"] = len(video_counts)
             features[platform + "_sum"] = len(videos)
-            features[platform + "_sum_distinct"] = len(set([video[2] for video in videos]))
+            features[platform + "_sum_distinct"] = len(set(videos))
 
         query = "UPDATE sources SET %s WHERE source_name=\'%s\'" % (postgres_helper.dict_set_string(features), source)
         c.execute(query)
