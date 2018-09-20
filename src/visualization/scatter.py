@@ -28,11 +28,11 @@ def scatter_2D(ax, x, y, color, clf=None, x_label="X", y_label="Y", title="2D Sc
         Z_proba = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
         Z_proba = Z_proba.reshape(xx.shape)
 
-        ax.contourf(xx, yy, Z_proba, cmap=plt.get_cmap("RdBu"), alpha=0.5)
+        ax.contourf(xx, yy, Z_proba, cmap=plt.get_cmap("RdYlGn"), alpha=0.5)
         ax.set_xlim(xx.min(), xx.max())
         ax.set_ylim(yy.min(), yy.max())
 
-    ax.scatter(x, y, c=color, cmap=plt.get_cmap("RdBu"))
+    ax.scatter(x, y, c=color, cmap=plt.get_cmap("RdYlGn"))
 
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
