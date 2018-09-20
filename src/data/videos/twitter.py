@@ -21,7 +21,7 @@ def download(tweet_id):
 
     :param tweet_id:
     :param resolution:
-    :return: dict: crawling_status, view_count, duraton (ms), comments (=reply), shares (=retweets), likes (=favorite)
+    :return: dict: crawling_status, views, duraton (ms), comments (=reply), shares (=retweets), likes (=favorite)
     """
     ret = dict()
 
@@ -51,7 +51,7 @@ def download(tweet_id):
             ret["crawling_status"] = player_config["errors"][0]["message"]
         else:
             m3u8_url = player_config['track']['playbackUrl']
-            ret["view_count"] = int(player_config['track']['viewCount'].replace(',',''))
+            ret["views"] = int(player_config['track']['viewCount'].replace(',',''))
             ret["duration"] = int(player_config['track']['durationMs'])
 
             # Get some more information by extracting it from the website embedding the tweet

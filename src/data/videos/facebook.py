@@ -22,7 +22,6 @@ def download(facebook_video_id):
     ret = dict()
 
     try:
-        # TODO If it turns out lowest_res is sufficient, get rid of it altogether
         video_path = video_helper.get_path("facebook")
 
         url = "https://www.facebook.com/theweeklytv/videos/" + facebook_video_id
@@ -34,7 +33,7 @@ def download(facebook_video_id):
             ret["comments"] = int(re.findall("commentcount:([0-9]*),", res.text)[0])
             ret["shares"] = int(re.findall("sharecount:([0-9]*),", res.text)[0])
             ret["likes"] = int(re.findall("likecount:([0-9]*),", res.text)[0])
-            ret["view_count"] = int(re.findall("viewCount:\"([0-9,]*)\",", res.text)[0].replace(",", ""))
+            ret["views"] = int(re.findall("viewCount:\"([0-9,]*)\",", res.text)[0].replace(",", ""))
             ret["duration"] = -1  # TODO
 
             # Alternatively, theres also hd_src and both with _no_ratelimit postfix
@@ -60,13 +59,7 @@ def get_id_from_url(url):
     video_url = urllib.parse.parse_qs(parsed.query)['href'][0]
     return video_url.split("/")[-2]  # Theres a trailing slash
 
-
 embedding_url = "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Ftheweeklytv%2Fvideos%2F2142588782656547%2F&show_text=0&width=476"
-video_url = "https://www.facebook.com/theweeklytv/videos/2142588782656547/"
-
-platform = "facebook"
-resolution = "lowest_res"
-video_path = os.environ["DATA_PATH"] + "/raw/videos/%s/%s/" % (platform, resolution)
 
 if __name__ == '__main__':
     video_id = get_id_from_url(embedding_url)

@@ -1,41 +1,44 @@
-import glob
-import os
 from multiprocessing import Pool
 from random import shuffle
 
 import psycopg2
-import time
-from pytube import YouTube
-from pytube.exceptions import RegexMatchError
-import logging
-from src.data.videos import video as video_helper
-from src.visualization.console import SyncedCrawlingProgress
 
-raw_video_path = os.environ["DATA_PATH"] + "/raw/videos/%s/%s/random1000" % (platform, resolution)
-os.makedirs(raw_video_path, exist_ok=True)
-
-logging.basicConfig(filename=os.path.join(raw_video_path, '%d.log' % time.time()), level=logging.DEBUG)
+from src.data.postgres import postgres_helper
+from src.data.videos import youtube, twitter, facebook
+from src.visualization.console import CrawlingProgress
 
 
-def download_yt_video(video):
-
+def download_video(args):
+    url, platform = args
+    if platform == "youtube":
+        video_id = youtube.get_id_from_url(url)
+        video = youtube.download(video_id)
+    elif platform == "twitter":
+        video_id = twitter.get_id_from_url(url)
+        video = twitter.download(video_id)
+    else:  # if platform == "facebook":
+        video_id = facebook.get_id_from_url(url)
+        video = facebook.download(video_id)
+    video["id"] = video_id
+    video["url"] = url
+    return video
 
 
 def run():
     # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
-    c.execute(
-        """SELECT found_videos.video_url FROM (found_videos
-            LEFT JOIN hosts ON hosts.hostname=found_videos.hostname)
-            WHERE hosts.youtube_relevant=TRUE AND platform=%s""", [platform])
-
+    c.execute("SELECT url, platform FROM videos WHERE crawling_status = 'Not Crawled'")
     videos = c.fetchall()
     shuffle(videos)
     videos = videos[:1000]
-    pool = Pool(4)
-    crawling_progress = SyncedCrawlingProgress(len(videos), update_every=10)
-    for _ in pool.imap_unordered(download_yt_video, videos):
+
+    pool = Pool(1)
+    crawling_progress = CrawlingProgress(len(videos), update_every=10)
+    for video in pool.imap_unordered(download_video, videos):
+        query = ("UPDATE videos SET %s" % postgres_helper.dict_mogrifying_string(video)) + " WHERE url=%(url)s"
+        c.execute(query, video)
+        conn.commit()
         crawling_progress.inc(by=1)
     pool.close()
     pool.join()

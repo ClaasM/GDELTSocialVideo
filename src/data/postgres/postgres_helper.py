@@ -64,5 +64,11 @@ def dict_insert_string(table, _dict):
 def dict_set_string(_dict):
     set_str = ""
     for key in _dict.keys():
-        set_str += str(key) + "=" + str(_dict[key]) + ","
+        set_str += str(key) + "=" + _dict[key] + ","
+    return set_str[:-1]
+
+def dict_mogrifying_string(_dict):
+    set_str = ""
+    for key in _dict.keys():
+        set_str += str(key) + "=%(" + str(key) + ")s,"
     return set_str[:-1]

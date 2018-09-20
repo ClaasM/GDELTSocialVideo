@@ -122,8 +122,17 @@ CREATE TABLE IF NOT EXISTS article_videos (
 );
 
 CREATE TABLE IF NOT EXISTS videos (
-  video_id        TEXT, --the video_id is extracted from the url when crawling it (to make querying for it faster).
+  url       TEXT NOT NULL,
+  id        TEXT, --the video_id is extracted from the url when crawling it (to make querying for it faster).
+  platform        TEXT NOT NULL,
   crawling_status TEXT DEFAULT 'Not Crawled',
+  comments        INT,
+  shares          INT,
+  likes           INT,
+  views           INT,
+  duration        INT,
+
+  PRIMARY KEY (url) -- Primary keys are automatically indexed
 );
 
 CREATE TABLE  IF NOT EXISTS sources (

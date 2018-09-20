@@ -19,7 +19,9 @@ from src.visualization.console import CrawlingProgress
 
 ''' Some intialization TODO use the separating comments from the BA '''
 
-minifier = htmlmin.Minifier(remove_comments=True, remove_all_empty_space=True, reduce_boolean_attributes=True, remove_empty_space=True)
+minifier = htmlmin.Minifier(remove_comments=True, remove_all_empty_space=True, reduce_boolean_attributes=True,
+                            remove_empty_space=True)
+
 
 def crawl_article(article):
     index, (article_url, source_name) = article
@@ -60,11 +62,16 @@ def run():
             # If the article has been successfully crawled...
             if status == 'Success':
                 # ...Update the article count in the sources table
-                c.execute("INSERT INTO sources (source_name)  VALUES (%s) ON CONFLICT (source_name) DO UPDATE SET article_count = sources.article_count + 1", [source_name])
+                c.execute(
+                    "INSERT INTO sources (source_name)  VALUES (%s) ON CONFLICT (source_name) DO UPDATE SET article_count = sources.article_count + 1",
+                    [source_name])
                 # ...Save all the found videos to the database
                 for platform, video_url in videos:
                     c.execute("""INSERT INTO article_videos (source_url, source_name, platform, video_url)
                                   VALUES (%s, %s, %s, %s)""", [source_url, source_name, platform, video_url])
+                    # Insert it into the videos table s.t. it contains all videos in the end
+                    c.execute("INSERT INTO videos (url, platform) VALUES (%s,%s) ON CONFLICT DO NOTHING",
+                              [video_url, platform])
             conn.commit()
             crawling_progress.inc(1)
 

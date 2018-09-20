@@ -22,13 +22,15 @@ def download(youtube_video_id):
 	ret = dict()
 
 	try:
-		video_path = video_helper.get_path("twitter")
+		video_path = video_helper.get_path("youtube")
 
 		# The ID, extracted from the embedding url, is put into the normal yt-url scheme.
-		yt_url = "www.youtube.com/watch?v=%s" % video_id
+		yt_url = "www.youtube.com/watch?v=%s" % youtube_video_id
 		yt = YouTube(yt_url)
 
-		ret["duration"] = yt.length # TODO is this ms?
+		ret["duration"] = yt.length
+		ret["views"] = yt.views
+		# TODO get the rest of the variables
 
 		if int(yt.length) <= length_cuttoff:
 			stream = yt.streams \
@@ -69,13 +71,5 @@ def get_id_from_url(url):
     except Exception as e:
         return str(e)
 
-tweet_with_video = "1041730759613046787"
-tweet_with_video_and_audio = "1041782784782589952"
-tweet_without_video = "1014956568129892352"
-
-platform = "twitter"
-resolution = "lowest_res"
-video_path = os.environ["DATA_PATH"] + "/raw/videos/%s/%s/" % (platform, resolution)
-
 if __name__ == '__main__':
-	download(tweet_with_video, video_path)
+	download(tweet_with_video,)
