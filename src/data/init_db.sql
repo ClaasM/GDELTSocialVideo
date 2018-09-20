@@ -159,6 +159,14 @@ CREATE TABLE  IF NOT EXISTS sources (
   PRIMARY KEY (source_name)
 );
 
+CREATE TABLE IF NOT EXISTS labeled_sources(
+  source_name TEXT,
+  youtube_relevant INTEGER,
+  twitter_relevant INTEGER,
+  facebook_relevant INTEGER,
+  PRIMARY KEY (source_name)
+);
+
 -- INDICES
 -- Indices are only created where they are really needed, because they take up space and slow down inserts/deletes
 CREATE INDEX IF NOT EXISTS mentions_global_event_id_index

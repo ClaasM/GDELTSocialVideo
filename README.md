@@ -67,6 +67,9 @@ For example, a website might have a "recommended videos"-section, the contents o
 A classifier was trained on a manually labeled set of sources to filter these out, with an accuracy of >95%.
 More information on how that was achieved can be found in my thesis. TODO link
 
+To use the labeled sources, import them from models/thesis_public_labeled_hosts.csv into the labeled_hosts table:
+
+COPY labeled_sources FROM 'labeled_hosts.csv' DELIMITER ',' CSV;
 
 
 TODO examples how to get articles for a video, etc.
