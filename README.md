@@ -48,7 +48,7 @@ To check the table sizes:
 
 SELECT relname, (relpages * 8) / 1024 AS size_mb FROM pg_class ORDER BY relpages DESC LIMIT 20;
 
-### Crawling
+### Crawling Articles
 
 To get status on the crawling:
 SELECT left(crawling_status, 14), count(left(crawling_status, 14)) FROM articles GROUP BY left(crawling_status, 14) ORDER BY count(left(crawling_status, 14)) DESC;
@@ -59,6 +59,10 @@ DELETE FROM article_videos
 DELETE FROM sources;
 
 **For the source relevancy classifier (see below) to work, you need at least ~1M crawled articles. Otherwise there will not be enough articles/videos per source to classify it.**
+
+### Crawling Videos
+
+To reset:
 
 ## Source classification
 
@@ -76,6 +80,8 @@ TODO examples how to get articles for a video, etc.
 TODO export are acutally the events, they were just called export for
 
 Make sure the Project is in your PYTHONPATH, otherwise the src wont be importable
+
+
 
 # Troubleshooting:
 

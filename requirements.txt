@@ -34,6 +34,7 @@ AsIs
 seaborn
 htmlmin
 tqdm
+ffprobe
 
 # Boilerpipe stuff
 # TODO Make sure boilerpipe setup.py is executed correctly

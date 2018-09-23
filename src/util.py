@@ -52,11 +52,20 @@ def append_line(path, line):
         outfile.write(line + "\n")
 
 
-
-
-
 def is_url(string):
     if validators.url(string):
         return True
     else:
         return False  # We just want boolean values, no ValidationFailure objects
+
+
+def convert_si_to_number(number):
+    number = number.replace(",","")
+    if 'K' in number:
+        return int(float(number.replace('K', '')) * 1000)
+    elif 'M' in number:
+        return int(float(number.replace('M', '')) * 1000000)
+    elif 'B' in number:
+        return int(float(number.replace('B', '')) * 1000000000)
+    else:
+        return int(number)

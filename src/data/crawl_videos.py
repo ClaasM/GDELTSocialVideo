@@ -10,16 +10,21 @@ from src.visualization.console import CrawlingProgress
 
 def download_video(args):
     url, platform = args
-    if platform == "youtube":
-        video_id = youtube.get_id_from_url(url)
-        video = youtube.download(video_id)
-    elif platform == "twitter":
-        video_id = twitter.get_id_from_url(url)
-        video = twitter.download(video_id)
-    else:  # if platform == "facebook":
-        video_id, user_name = facebook.get_id_from_url(url)
-        video = facebook.download(video_id, user_name)
-    video["id"] = video_id
+
+    try:
+        if platform == "youtube":
+            video_id = youtube.get_id_from_url(url)
+            video = youtube.download(video_id)
+        elif platform == "twitter":
+            video_id = twitter.get_id_from_url(url)
+            video = twitter.download(video_id)
+        else:  # if platform == "facebook":
+            video_id, user_name = facebook.get_id_from_url(url)
+            video = facebook.download(video_id, user_name)
+        video["id"] = video_id
+    except Exception as e:
+        print(e)
+        video = {"crawling_status": str(e)} # Can't extract id from video
     video["url"] = url
     return video
 
@@ -28,7 +33,8 @@ def run():
     # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
-    c.execute("SELECT url, platform FROM videos WHERE crawling_status = 'Not Crawled' AND platform='facebook'")
+    # TODO or Player Config: 429, or Player Config: 403
+    c.execute("""SELECT url, platform FROM videos WHERE crawling_status = 'Not Crawled' AND platform='youtube'""")
     videos = c.fetchall()
     shuffle(videos)
     videos = videos[:1000]
