@@ -35,11 +35,11 @@ def run():
     c = conn.cursor()
     # TODO or Player Config: 429, or Player Config: 403 when doing this for twitter
     c.execute("""SELECT url, platform FROM videos WHERE crawling_status = 'Not Crawled' AND platform = 'youtube'""") # AND platform='twitter'
-    videos = c.fetchall()
+    videos = c.fetchall()[:10000]
     shuffle(videos)
 
     pool = Pool(16)
-    crawling_progress = CrawlingProgress(len(videos), update_every=10)
+    crawling_progress = CrawlingProgress(len(videos), update_every=100)
     for video in pool.imap_unordered(download_video, videos):
         # print(video)
         query = ("UPDATE videos SET %s" % postgres_helper.dict_mogrifying_string(video)) + " WHERE url=%(url)s"
