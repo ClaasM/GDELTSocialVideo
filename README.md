@@ -63,6 +63,7 @@ DELETE FROM sources;
 ### Crawling Videos
 
 To reset:
+UPDATE videos SET crawling_status='Not Crawled'
 
 ## Source classification
 
@@ -87,6 +88,9 @@ Make sure the Project is in your PYTHONPATH, otherwise the src wont be importabl
 
 The number of columns might change.
 Some files are missing in GDELT (these scripts handle that correctly)
+
+Keyerror: format
+ffprobe is not returning anything, because it cant work with ~paths when invoked as a subprocess
 
 Project Organization
 ------------

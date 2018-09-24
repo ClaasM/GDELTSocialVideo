@@ -1,7 +1,18 @@
-import ffprobe
+import youtube_dl
 
-metadata=ffprobe.FFProbe("data/raw/videos/facebook/993318958828.mp4")
 
-for stream in metadata.streams:
-    if stream.isVideo():
-            print("Stream contains "+stream.frames()+" frames.")
+video_id = "gKQ9EG7F7Xc"
+
+ydl_opts = {
+    # Download best format available but not better that 480p
+    'format': 'bestvideo[height<=480]+bestaudio/best[height<=480]',
+    'outtmpl': video_id + '.%(ext)s',
+}
+
+
+
+    #size = info["filesize"]
+
+
+    print(ret)
+    # TODO this also has "dislike_count", "average_rating" etc.

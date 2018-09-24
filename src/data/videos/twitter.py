@@ -45,7 +45,7 @@ def download(tweet_id):
         # 1042178736261685249
         # 1042230193807613957
         # ...
-        guest_token = "1044003377464692737"
+        guest_token = "1044235430567333888"
         # Talk to the API to get the m3u8 URL using the token just extracted
         player_config_url = 'https://api.twitter.com/1.1/videos/tweet/config/%s.json' % tweet_id
         player_config_response = requests.get(player_config_url,
@@ -58,8 +58,6 @@ def download(tweet_id):
                 m3u8_url = player_config['track']['playbackUrl']
                 ret["views"] = util.convert_si_to_number(player_config['track']['viewCount'])
                 ret["duration"] = int(player_config['track']['durationMs'])
-
-                print(player_config)
 
                 # Get some more information by extracting it from the website embedding the tweet
                 status_url = "http://twitter.com/i/status/" + tweet_id
@@ -82,9 +80,21 @@ def download(tweet_id):
                 m3u8_parse = m3u8.loads(m3u8_response.text)
 
                 if m3u8_parse.is_variant:
-                    lowest_res = sorted(m3u8_parse.playlists, key=lambda video: video.stream_info.resolution[0])[0]
 
-                    ts_m3u8_response = requests.get(video_host + lowest_res.uri)
+
+                    # Find video with 480p resolution or higher (or lower if not available)
+                    # ...sort by res
+                    sorted_by_res = sorted(m3u8_parse.playlists, key=lambda video: video.stream_info.resolution[0])
+                    correct_res = None
+                    for video in sorted_by_res:
+                        if video.stream_info.resolution[0] >= 480:
+                            correct_res = video
+                            break
+                    if correct_res is None:
+                        # No video with resolution >= 480p found
+                        correct_res = sorted_by_res[-1]
+
+                    ts_m3u8_response = requests.get(video_host + correct_res.uri)
                     ts_m3u8_parse = m3u8.loads(ts_m3u8_response.text)
 
                     # TODO convert to mp4

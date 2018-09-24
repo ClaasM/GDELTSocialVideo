@@ -33,16 +33,15 @@ def run():
     # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
-    # TODO or Player Config: 429, or Player Config: 403
-    c.execute("""SELECT url, platform FROM videos WHERE crawling_status = 'Not Crawled' AND platform='youtube'""")
+    # TODO or Player Config: 429, or Player Config: 403 when doing this for twitter
+    c.execute("""SELECT url, platform FROM videos WHERE crawling_status = 'Not Crawled' AND platform = 'youtube'""") # AND platform='twitter'
     videos = c.fetchall()
     shuffle(videos)
-    videos = videos[:1000]
 
-    pool = Pool(4)
+    pool = Pool(16)
     crawling_progress = CrawlingProgress(len(videos), update_every=10)
     for video in pool.imap_unordered(download_video, videos):
-        print(video)
+        # print(video)
         query = ("UPDATE videos SET %s" % postgres_helper.dict_mogrifying_string(video)) + " WHERE url=%(url)s"
         c.execute(query, video)
         conn.commit()
