@@ -10,23 +10,30 @@ import psycopg2
 from src.data.videos import video as video_helper
 from src.data.websites import website as website_helper
 
-path = os.environ["DATA_PATH"] + "/raw/articles/"
-files = os.listdir(path)
 
-for index, file in enumerate(files):
+conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
+c = conn.cursor()
+c.execute("SELECT DISTINCT source_url from article_videos")
+
+videos = c.fetchall()
+
+print(len(videos))
+
+counter = {False:0,True:0}
+
+for index, video in enumerate(videos):
     if index % 10000 == 0:
         print(index)
-    url = website_helper.url_decode(file)
-    new_file_path, new_file_name = website_helper.get_article_filepath(url)
-    if not os.path.exists(new_file_path):
-        os.makedirs(new_file_path)
-    os.rename(path + file, new_file_path + "/" + new_file_name)
+        print(counter)
+    path, name = website_helper.get_article_filepath(video[0])
+    exists = os.path.exists(path + "/" + name)
+    if not exists:
+        print(video[0])
+        print(path)
+    counter[exists] += 1
 
+print(counter)
 
-# conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
-# c = conn.cursor()
-
-# videos_path = video_helper.get_path("youtube")
 # videos = glob.glob(videos_path + "/*.mp4")
 # print(len(videos))
 
