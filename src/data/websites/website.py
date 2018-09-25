@@ -12,7 +12,7 @@ from xml import etree
 from bs4 import BeautifulSoup
 from langdetect import detect
 from src import util
-
+from src.data.videos import youtube, twitter, facebook
 # from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
 
 raw_path = os.environ["DATA_PATH"] + "/raw/articles/"
@@ -214,12 +214,15 @@ def get_video_sources_bs(soup):
     for iframe in iframes:
         if iframe.has_attr("src"):
             src = iframe['src']
-            # Only youtube videos for now, but might include other sources at some point.
-            if YT_VIDEO_IDENTIFIER in src:
-                yield "youtube", src
-            elif FB_VIDEO_IDENTIFIER in src:
-                yield "facebook", src
-
+            try:
+                # Only youtube videos for now, but might include other sources at some point.
+                if YT_VIDEO_IDENTIFIER in src:
+                    yield "youtube", src, youtube.get_id_from_url(src)
+                elif FB_VIDEO_IDENTIFIER in src:
+                    yield "facebook", src, facebook.get_id_from_url(src)
+            except:
+                # Invalid URL, video_id cannot be extracted
+                pass
     # Tweets are embedded blockquotes with class "twitter-tweet"
     blockquotes = soup.findAll("blockquote", "twitter-tweet")
     for blockquote in blockquotes:
@@ -230,7 +233,11 @@ def get_video_sources_bs(soup):
             if link.has_attr("href"):
                 href = link["href"]
                 if re.search(TWITTER_IDENTIFIER_REGEX, href):
-                    yield "twitter", href
+                    try:
+                        yield "twitter", href, twitter.get_id_from_url(href)
+                    except:
+                        # Invalid URL, video_id cannot be extracted
+                        pass
 
 
 def get_video_sources_etree(etree):

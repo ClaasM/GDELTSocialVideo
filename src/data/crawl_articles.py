@@ -4,6 +4,8 @@ Saves each found embedded youtube or facebook video and twitter tweets to the da
 Since crawling is I/O bound anyways, readability was prioritized over speed.
 Anything else is nonsense in Python anyways.
 
+
+TODO make this also insert the IDs s.t. that can be our unique key
 """
 from multiprocessing import Pool
 
@@ -66,7 +68,7 @@ def run():
                     "INSERT INTO sources (source_name)  VALUES (%s) ON CONFLICT (source_name) DO UPDATE SET article_count = sources.article_count + 1",
                     [source_name])
                 # ...Save all the found videos to the database
-                for platform, video_url in videos:
+                for platform, video_url, video_id in videos:
                     c.execute("""INSERT INTO article_videos (source_url, source_name, platform, video_url)
                                   VALUES (%s, %s, %s, %s)""", [source_url, source_name, platform, video_url])
                     # Insert it into the videos table s.t. it contains all videos in the end
