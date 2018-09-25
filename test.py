@@ -1,18 +1,22 @@
-import youtube_dl
+# TODO move all article files
+# AND set every file that has success but doesnt exists to "Not crawled"
+# AND recrawl
+
+import glob
+
+import psycopg2
+from src.data.videos import video as video_helper
+from src.data.websites import website as website_helper
 
 
-video_id = "gKQ9EG7F7Xc"
+conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
+c = conn.cursor()
 
-ydl_opts = {
-    # Download best format available but not better that 480p
-    'format': 'bestvideo[height<=480]+bestaudio/best[height<=480]',
-    'outtmpl': video_id + '.%(ext)s',
-}
+videos_path = video_helper.get_path("youtube")
+videos = glob.glob(videos_path + "/*.mp4")
+print(len(videos))
 
-
-
-    #size = info["filesize"]
-
-
-    print(ret)
-    # TODO this also has "dislike_count", "average_rating" etc.
+for video_path in videos:
+    video_id = video_path.split("/")[-1].split(".")[0]
+    c.execute("UPDATE videos SET crawling_status='Success' WHERE id=%s", [video_id])
+    conn.commit()

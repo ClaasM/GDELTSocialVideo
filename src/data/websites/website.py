@@ -3,6 +3,7 @@ import gzip
 import os
 import re
 import urllib
+from urllib.parse import urlparse
 
 # DO NOT IMPORT NLTK ANYWHERE THAT USES MULTIPROCESSING! https://github.com/nltk/nltk/issues/947
 # import nltk
@@ -22,6 +23,7 @@ processed_path = os.environ["DATA_PATH"] + "/processed/sentences/"
 
 if not os.path.exists(raw_path):
     os.makedirs(raw_path)
+
 
 def download_and_save(row):
     """
@@ -269,8 +271,10 @@ def url_encode(url):
     """
     return urllib.parse.quote_plus(url)
 
+
 def url_decode(filename):
     return urllib.parse.unquote_plus(filename)
+
 
 def save(data, url):
     filename = url_encode(url)
@@ -280,3 +284,26 @@ def save(data, url):
 def load(url):
     filename = urllib.parse.quote_plus(url)
     return util.load_gzip_html(os.path.join(raw_path, filename))
+
+
+def get_article_filepath(url):
+    parsed = urlparse(url)
+    # Start with tld/domain/subdomain1/.../path1/path2/index.html?a=b#abc
+    hostname_path = parsed.hostname.split(".")
+    hostname_path.reverse()
+    url_path = parsed.path.strip("/").split("/")
+
+    file_path = os.path.join(get_articles_path(),
+                             *hostname_path,
+                             *url_path[:-1])  # The last bit is part of the name
+    # we ignore the fragment identifier as per https://tools.ietf.org/html/rfc3986 TODO quote
+    file_name = url_path[ -1] + parsed.query
+
+    return os.path.join(file_path, file_name)
+
+
+def get_articles_path():
+    path = os.environ["DATA_PATH"] + "/raw/articles/"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path
