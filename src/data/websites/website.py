@@ -314,7 +314,7 @@ def get_article_filepath(url):
 
 
 def get_articles_path():
-    path = os.environ["DATA_PATH"] + "/raw/articles_new/"
+    path = os.environ["DATA_PATH"] + "/raw/articles/"
     if not os.path.exists(path):
         os.makedirs(path)
     return path
