@@ -41,7 +41,7 @@ def run():
     pool = Pool(16)
     crawling_progress = CrawlingProgress(len(videos), update_every=100)
     for video in pool.imap_unordered(download_video, videos):
-        # print(video)
+        # TODO we dont need to extract and save video_id here anymore
         query = ("UPDATE videos SET %s" % postgres_helper.dict_mogrifying_string(video)) + " WHERE url=%(url)s"
         c.execute(query, video)
         conn.commit()

@@ -113,12 +113,14 @@ CREATE TABLE IF NOT EXISTS articles (
 
 -- Join table with some additional required information
 CREATE TABLE IF NOT EXISTS article_videos (
+  -- TODO delete unused columns
   source_url      TEXT NOT NULL,
   source_name     TEXT NOT NULL,
   platform        TEXT NOT NULL,
   video_url       TEXT NOT NULL,
   video_id       TEXT NOT NULL,
-  FOREIGN KEY (source_url) REFERENCES articles (source_url)
+  FOREIGN KEY (source_url) REFERENCES articles (source_url),
+  FOREIGN KEY (video_id) REFERENCES videos (video_id)
 );
 
 CREATE TABLE IF NOT EXISTS videos (

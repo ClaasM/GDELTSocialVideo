@@ -69,11 +69,11 @@ def run():
                     [source_name])
                 # ...Save all the found videos to the database
                 for platform, video_url, video_id in videos:
-                    c.execute("""INSERT INTO article_videos (source_url, source_name, platform, video_url)
-                                  VALUES (%s, %s, %s, %s)""", [source_url, source_name, platform, video_url])
                     # Insert it into the videos table s.t. it contains all videos in the end
-                    c.execute("INSERT INTO videos (url, platform) VALUES (%s,%s) ON CONFLICT DO NOTHING",
-                              [video_url, platform])
+                    c.execute("INSERT INTO videos (url, platform, id) VALUES (%s,%s) ON CONFLICT DO NOTHING",
+                              [video_url, platform, video_id])
+                    c.execute("""INSERT INTO article_videos (source_url, source_name, platform, video_url, video_id)
+                                  VALUES (%s, %s, %s, %s)""", [source_url, source_name, platform, video_url, video_id])
             conn.commit()
             crawling_progress.inc(1)
 
