@@ -50,6 +50,16 @@ SELECT relname, (relpages * 8) / 1024 AS size_mb FROM pg_class ORDER BY relpages
 
 ### Crawling Articles
 
+The articles are saved in data/raw/articles + a path that consists of their domain,
+split at dots and reversed, followed by the path of the url. The filename is the last part of the path, plus the query parameters to ensure unique identification.
+The fragment identifier is ignored as per RFC TODO quote.
+
+Examples:
+
+www.google.com/ is saved as www under com/google/.
+https://www.amazon.com/gp/search/ref=sr_hi_4?rh= is saved as ref=sr_hi_4?rh= under com/amazon/search
+
+
 To get status on the crawling:
 SELECT left(crawling_status, 14), count(left(crawling_status, 14)) FROM articles GROUP BY left(crawling_status, 14) ORDER BY count(left(crawling_status, 14)) DESC;
 

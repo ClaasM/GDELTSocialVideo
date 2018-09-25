@@ -286,24 +286,35 @@ def load(url):
     return util.load_gzip_html(os.path.join(raw_path, filename))
 
 
+FILE_ENDING = ".gzip"
+
+
 def get_article_filepath(url):
+    """
+    we ignore the fragment identifier as per https://tools.ietf.org/html/rfc3986 TODO quote
+    :param url:
+    :return:
+    """
     parsed = urlparse(url)
     # Start with tld/domain/subdomain1/.../path1/path2/index.html?a=b#abc
-    hostname_path = parsed.hostname.split(".")
-    hostname_path.reverse()
-    url_path = parsed.path.strip("/").split("/")
+    path = parsed.hostname.split(".")
+    path.reverse()
+    path += list(filter(None, parsed.path.split("/")))  # no empty strings
+    if parsed.query:
+        file_name = urllib.parse.quote_plus(parsed.query)
+    else:
+        file_name = path[-1]
+        path = path[:-1]
+    file_name += FILE_ENDING
+    file_path = os.path.join(get_articles_path(), *path)
+    return file_path, file_name
 
-    file_path = os.path.join(get_articles_path(),
-                             *hostname_path,
-                             *url_path[:-1])  # The last bit is part of the name
-    # we ignore the fragment identifier as per https://tools.ietf.org/html/rfc3986 TODO quote
-    file_name = url_path[ -1] + parsed.query
 
-    return os.path.join(file_path, file_name)
+# TODO test cases
 
 
 def get_articles_path():
-    path = os.environ["DATA_PATH"] + "/raw/articles/"
+    path = os.environ["DATA_PATH"] + "/raw/articles_new/"
     if not os.path.exists(path):
         os.makedirs(path)
     return path
