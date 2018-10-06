@@ -12,6 +12,7 @@ def download_video(args):
     url, platform = args
 
     try:
+        # TODO if using subscripts works here, this can use video.get_id_from_url and can be reduced to 2 lines.
         if platform == "youtube":
             video_id = youtube.get_id_from_url(url)
             video = youtube.download(video_id)
@@ -19,8 +20,8 @@ def download_video(args):
             video_id = twitter.get_id_from_url(url)
             video = twitter.download(video_id)
         else:  # if platform == "facebook":
-            video_id, user_name = facebook.get_id_from_url(url)
-            video = facebook.download(video_id, user_name)
+            video_id = facebook.get_id_from_url(url)
+            video = facebook.download(video_id)
         video["id"] = video_id
     except Exception as e:
         print(e)

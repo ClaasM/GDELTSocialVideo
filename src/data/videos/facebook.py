@@ -14,12 +14,17 @@ from requests import HTTPError
 from src.data.videos import video as video_helper
 
 
-def download(facebook_video_id, user_name):
-    ret = dict()
+def download(facebook_video_id):
+    """
 
+    :param facebook_video_id: Combination of the actual video id and the username, id + "/" + user_name
+    :return:
+    """
+    ret = dict()
+    user_name, video_id = facebook_video_id.split("/")
     try:
         video_path = video_helper.get_path("facebook")
-        url = "https://www.facebook.com/%s/videos/%s" % (user_name, facebook_video_id)
+        url = "https://www.facebook.com/%s/videos/%s" % (user_name, video_id)
         res = requests.get(url, timeout=5, allow_redirects=True)
         if res.status_code == 200:
             # Alternatively, theres also hd_src and both with _no_ratelimit postfix
@@ -67,18 +72,18 @@ def get_id_from_url(url):
     """
 
     :param url:
-    :return: (video_id, user_name)
+    :return: video_id + "/" + user_name
     """
     parsed = urllib.parse.urlparse(url)
     video_url = urllib.parse.parse_qs(parsed.query)['href'][0]
     parts = video_url.split("/")
-    return parts[-2], parts[-4]  # Theres a trailing slash, plus we also need the username in this case.
+    return parts[-2] + "/" + parts[-4]  # Theres a trailing slash, plus we also need the username in this case.
 
 
 embedding_url = "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Ftheweeklytv%2Fvideos%2F2142588782656547%2F&show_text=0&width=476"
 non_available_url = "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fmonica.j.davis.9%2Fvideos%2F10211561611305403%2F&show_text=1&width=267"
 
 if __name__ == '__main__':
-    video_id, user_name = get_id_from_url(embedding_url)
-    video = download(video_id, user_name)
+    video_id = get_id_from_url(embedding_url)
+    video = download(video_id)
     print(video)
