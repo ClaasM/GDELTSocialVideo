@@ -1,36 +1,29 @@
 # crawl any websites that dont contain </html>
+import re
 
 import psycopg2
+import sys
 
 from src.data.videos import video as video_helper
+from src.data.websites import website as website_helper
 
 conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
+
 c = conn.cursor()
-c.execute("SELECT video_url, platform from article_videos")
+c.execute("SELECT DISTINCT source_url from article_videos")
+articles = c.fetchall()
 
-videos = c.fetchall()
+print(len(articles))
+counter = {True: 0, False: 0}
 
-print(len(videos))
-counter = {"Success": 0, "Error": 0}
-for index, (video_url, platform) in enumerate(videos):
+for index, (source_url,) in enumerate(articles):
     if index % 10000 == 0:
         print(index)
         print(counter)
-    try:
-        video_id = video_helper.get_id_from_url(video_url, platform)
-        c.execute("UPDATE videos SET id=%s WHERE url=%s", [video_id, video_url])
-        conn.commit()
-        counter["Success"] += 1
-    except Exception as e:
-        print(e)
-        print(video_url)
-        counter["Error"] += 1
+    path = website_helper.get_article_filepath(source_url)
+    article = website_helper.load(source_url)
+    # Assuming that if it contains a closing tag, it is HTML
+    counter[bool(re.search(r'</[a-zA-Z]+>', article))] +=1
 
 print(counter)
-# videos = glob.glob(videos_path + "/*.mp4")
-# print(len(videos))
 
-# for video_path in videos:
-#    video_id = video_path.split("/")[-1].split(".")[0]
-#    c.execute("UPDATE videos SET crawling_status='Success' WHERE id=%s", [video_id])
-#    conn.commit()

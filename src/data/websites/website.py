@@ -266,10 +266,6 @@ def get_video_sources_etree(etree):
                             yield "twitter", sub_element.attrib["href"]
 
 
-def get_path(url):
-    return os.environ["DATA_PATH"] + "/raw/articles/%s" % urllib.parse.quote_plus(url)
-
-
 def url_encode(url):
     """
     Makes a url safe to be used as a URL-parameter or filename.
@@ -284,13 +280,15 @@ def url_decode(filename):
 
 
 def save(data, url):
-    filename = url_encode(url)
-    util.save_gzip_html(os.path.join(raw_path, filename), data)
+    file_path, file_name = get_article_filepath(url)
+    with gzip.open(file_path + "/" + file_name, "wb+") as file:
+        file.write(data.encode("utf-8"))
 
 
 def load(url):
-    filename = urllib.parse.quote_plus(url)
-    return util.load_gzip_html(os.path.join(raw_path, filename))
+    file_path, file_name = get_article_filepath(url)
+    with gzip.open(file_path + "/" + file_name, "rb") as file:
+        return file.read().decode("utf-8")
 
 
 FILE_ENDING = ".gzip"
