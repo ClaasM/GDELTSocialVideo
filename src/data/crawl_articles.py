@@ -68,10 +68,10 @@ def run():
                     "INSERT INTO sources (source_name)  VALUES (%s) ON CONFLICT (source_name) DO UPDATE SET article_count = sources.article_count + 1",
                     [source_name])
                 # ...Save all the found videos to the database
-                for platform, video_url, video_id in videos:
+                for platform, video_id in videos:
                     # Insert it into the videos table s.t. it contains all videos in the end
-                    c.execute("INSERT INTO videos (url, platform, id) VALUES (%s,%s,%s) ON CONFLICT DO NOTHING",
-                              [video_url, platform, video_id])
+                    c.execute("INSERT INTO videos (platform, id) VALUES (%s,%s) ON CONFLICT DO NOTHING",
+                              [platform, video_id])
                     c.execute("""INSERT INTO article_videos (source_url, source_name, platform, video_id)
                                   VALUES (%s, %s, %s, %s)""", [source_url, source_name, platform, video_id])
             conn.commit()

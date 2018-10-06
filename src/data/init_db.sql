@@ -117,14 +117,12 @@ CREATE TABLE IF NOT EXISTS article_videos (
   source_url      TEXT NOT NULL,
   source_name     TEXT NOT NULL,
   platform        TEXT NOT NULL,
-  video_url       TEXT NOT NULL,
   video_id       TEXT NOT NULL,
   FOREIGN KEY (source_url) REFERENCES articles (source_url),
   FOREIGN KEY (video_id) REFERENCES videos (video_id)
 );
 
 CREATE TABLE IF NOT EXISTS videos (
-  url       TEXT NOT NULL,
   id        TEXT NOT NULL, --the video_id is extracted from the url when crawling it (to make querying for it faster).
   platform        TEXT NOT NULL,
   crawling_status TEXT DEFAULT 'Not Crawled',

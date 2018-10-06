@@ -1,4 +1,4 @@
-# populate article_videos and videos id's
+# crawl any websites that dont contain </html>
 
 import psycopg2
 
@@ -6,7 +6,7 @@ from src.data.videos import video as video_helper
 
 conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
 c = conn.cursor()
-c.execute("SELECT url, platform from videos")
+c.execute("SELECT video_url, platform from article_videos")
 
 videos = c.fetchall()
 

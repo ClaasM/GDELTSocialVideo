@@ -217,9 +217,9 @@ def get_video_sources_bs(soup):
             try:
                 # Only youtube videos for now, but might include other sources at some point.
                 if YT_VIDEO_IDENTIFIER in src:
-                    yield "youtube", src, youtube.get_id_from_url(src)
+                    yield "youtube", youtube.get_id_from_url(src)
                 elif FB_VIDEO_IDENTIFIER in src:
-                    yield "facebook", src, facebook.get_id_from_url(src)
+                    yield "facebook", facebook.get_id_from_url(src)
             except:
                 # Invalid URL, video_id cannot be extracted
                 pass
@@ -234,7 +234,7 @@ def get_video_sources_bs(soup):
                 href = link["href"]
                 if re.search(TWITTER_IDENTIFIER_REGEX, href):
                     try:
-                        yield "twitter", href, twitter.get_id_from_url(href)
+                        yield "twitter", twitter.get_id_from_url(href)
                     except:
                         # Invalid URL, video_id cannot be extracted
                         pass

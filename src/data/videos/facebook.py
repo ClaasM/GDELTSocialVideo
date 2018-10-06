@@ -72,12 +72,12 @@ def get_id_from_url(url):
     """
 
     :param url:
-    :return: video_id + "/" + user_name
+    :return: user_name + "/" + video_id
     """
     parsed = urllib.parse.urlparse(url)
     video_url = urllib.parse.parse_qs(parsed.query)['href'][0]
     parts = video_url.split("/")
-    return parts[-2] + "/" + parts[-4]  # Theres a trailing slash, plus we also need the username in this case.
+    return parts[-4] + "/" + parts[-2]  # Theres a trailing slash, plus we also need the username in this case.
 
 
 embedding_url = "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Ftheweeklytv%2Fvideos%2F2142588782656547%2F&show_text=0&width=476"
