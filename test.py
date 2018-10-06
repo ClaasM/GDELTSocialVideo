@@ -18,14 +18,18 @@ minifier = htmlmin.Minifier(remove_comments=True, remove_all_empty_space=True, r
 def crawl_article(article):
     url, = article
     try:
-        res = requests.get(url, headers={"user-agent": "Mozilla"})
-        if res.status_code >= 300:
-            print(res.status_code)
-        else:
-            website_helper.save(minifier.minify(res.text), url)
+        text = website_helper.load(url)
+        if "</html>" not in text:
+            res = requests.get(url, headers={"user-agent": "Mozilla"})
+            if res.status_code >= 300:
+                #print(res.status_code)
+                pass
+            else:
+                #print("Success!")
+                website_helper.save(minifier.minify(res.text), url)
     except Exception as e:
         # The website was not successfully crawled, it should be tried again
-        print(e)
+        #print(e)
         return str(e)
 
     return "Success"
