@@ -40,3 +40,4 @@ ffprobe
 # TODO Make sure boilerpipe setup.py is executed correctly
 JPype1
 chardet
+moviepy

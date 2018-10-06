@@ -1,14 +1,7 @@
 """
-A small command line tool to make the labeling videos easier.
-Possible labels are: amateur (0), edited (1), professional (2)
-Whereas edit videos might include snippets of amateur footage with voice overlay, e.g. news reports,
-and professional does not include any amateur footage (e.g. music videos, movie trailers)
-
-TODO What percentage is already covered by amateur, news, trailer, music,
-
-
+A small command line tool to make the labeling of relevancy of a a video for a certain topic easier.
 TODO print introduction or something
-TODO also print total number of videos already labeled
+TODO also print total number of articles
 """
 
 import psycopg2
@@ -19,15 +12,10 @@ from src.visualization import console
 if __name__ == "__main__":
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS labeled_videos (
-                  id TEXT PRIMARY KEY,
-                  type INTEGER)''')
-    conn.commit()
 
-    # Create a cursor for every video that hasn't been labeled yet.
-    # TODO continue here
+    # Create a cursor for every host that hasn't been labeled yet.
     c.execute(
-        '''SELECT id FROM hosts LEFT JOIN labeled_hosts  ON labeled_hosts.hostname = hosts.hostname WHERE labeled_hosts.hostname IS NULL''')
+        '''SELECT hosts.hostname FROM hosts LEFT JOIN labeled_hosts  ON labeled_hosts.hostname = hosts.hostname WHERE labeled_hosts.hostname IS NULL''')
     hostnames = c.fetchall()
     shuffle(hostnames)
 

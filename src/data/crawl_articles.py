@@ -16,7 +16,7 @@ import htmlmin
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from bs4 import BeautifulSoup
-from src.data.websites import website
+from src.data.websites import website as website_helper
 from src.visualization.console import CrawlingProgress
 
 ''' Some intialization TODO use the separating comments from the BA '''
@@ -36,10 +36,10 @@ def crawl_article(article):
             status = "Success"
             bs = BeautifulSoup(res.text, features="lxml")
             # find video iframes and get their src attributes
-            videos = list(website.get_video_sources_bs(bs))
+            videos = list(website_helper.get_video_sources_bs(bs))
             if len(videos) > 0:
                 # This website has videos in it, so it is saved
-                website.save(minifier.minify(res.text), article_url)
+                website_helper.save(minifier.minify(res.text), article_url)
     except Exception as e:
         # The website was not successfully crawled, it should be tried again
         status = str(e)

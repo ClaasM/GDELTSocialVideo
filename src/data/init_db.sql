@@ -14,7 +14,7 @@ This is not using any foreign keys on mentions and events because:
 
 CREATE TABLE IF NOT EXISTS events (-- They are called "export" in the GDELT dataset, but events makes more sense
   -- Event ID and date attributes
-  global_event_id          BIGINT NOT NULL,
+  global_event_id          BIGINT PRIMARY KEY NOT NULL,
   sql_date                 INT    NOT NULL,
   month_year               INT    NOT NULL,
   year                     INT    NOT NULL,
@@ -80,9 +80,7 @@ CREATE TABLE IF NOT EXISTS events (-- They are called "export" in the GDELT data
   action_geo_feature_id    TEXT,
   -- Data management
   date_added               TEXT   NOT NULL,
-  source_url               TEXT   NOT NULL, -- Can't be a foreign key to Articles since it isn't actually always a url
-
-  PRIMARY KEY (global_event_id)
+  source_url               TEXT   NOT NULL -- Can't be a foreign key to Articles since it isn't actually always a url
 );
 
 CREATE TABLE IF NOT EXISTS mentions (
@@ -104,11 +102,9 @@ CREATE TABLE IF NOT EXISTS mentions (
 );
 
 CREATE TABLE IF NOT EXISTS articles (
-  source_url      TEXT NOT NULL, -- Those are the mention_identifiers that are url's (they not always are, see GDELT docs)
+  source_url      TEXT PRIMARY KEY NOT NULL, -- Those are the mention_identifiers that are url's (they not always are, see GDELT docs)
   source_name     TEXT NOT NULL,
-  crawling_status TEXT DEFAULT 'Not Crawled',
-
-  PRIMARY KEY (source_url) -- Primary keys are automatically indexed
+  crawling_status TEXT DEFAULT 'Not Crawled'
 );
 
 -- Join table with some additional required information
@@ -132,12 +128,12 @@ CREATE TABLE IF NOT EXISTS videos (
   views           INT,
   duration        INT,
 
-  PRIMARY KEY (platform, id) -- Primary keys are automatically indexed
+  PRIMARY KEY (platform, id)
 );
 
 CREATE TABLE  IF NOT EXISTS sources (
-  source_name                 TEXT NOT NULL,
-  article_count               INT DEFAULT 1,
+  source_name           TEXT PRIMARY KEY NOT NULL,
+  article_count         INT DEFAULT 1,
   -- Features are computed later
   twitter_std_dev       FLOAT,
   twitter_sum           INT,
@@ -154,17 +150,22 @@ CREATE TABLE  IF NOT EXISTS sources (
   -- Relevancy is determined by the classifier
   twitter_relevant            BOOL,
   youtube_relevant            BOOL,
-  facebook_relevant           BOOL,
-
-  PRIMARY KEY (source_name)
+  facebook_relevant           BOOL
 );
 
 CREATE TABLE IF NOT EXISTS labeled_sources(
-  source_name TEXT,
+  source_name TEXT PRIMARY KEY,
   youtube_relevant INTEGER,
   twitter_relevant INTEGER,
-  facebook_relevant INTEGER,
-  PRIMARY KEY (source_name)
+  facebook_relevant INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS labeled_videos (
+  id TEXT,
+  platform TEXT,
+  relevant INTEGER,
+
+  PRIMARY KEY (platform, id)
 );
 
 -- INDICES
