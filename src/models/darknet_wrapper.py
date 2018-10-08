@@ -51,7 +51,7 @@ class DETECTION(Structure):
 class IMAGE(Structure):
     _fields_ = [("w", c_int),
                 ("h", c_int),
-                ("c", c_int),
+                ("videos", c_int),
                 ("data", POINTER(c_float))]
 
 

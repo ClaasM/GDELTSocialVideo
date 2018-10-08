@@ -9,24 +9,20 @@ from src.visualization.console import CrawlingProgress
 
 
 def download_video(args):
-    url, platform = args
+    video_id, platform = args
 
     try:
-        # TODO if using subscripts works here, this can use video.get_id_from_url and can be reduced to 2 lines.
+        # TODO use subscripts here
         if platform == "youtube":
-            video_id = youtube.get_id_from_url(url)
             video = youtube.download(video_id)
         elif platform == "twitter":
-            video_id = twitter.get_id_from_url(url)
             video = twitter.download(video_id)
         else:  # if platform == "facebook":
-            video_id = facebook.get_id_from_url(url)
             video = facebook.download(video_id)
         video["id"] = video_id
     except Exception as e:
         print(e)
         video = {"crawling_status": str(e)} # Can't extract id from video
-    video["url"] = url
     return video
 
 
@@ -35,15 +31,15 @@ def run():
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     # TODO or Player Config: 429, or Player Config: 403 when doing this for twitter
-    c.execute("""SELECT url, platform FROM videos WHERE crawling_status = 'Not Crawled' AND platform = 'youtube'""") # AND platform='twitter'
-    videos = c.fetchall()[:10000]
+    c.execute("""SELECT id, platform FROM videos WHERE crawling_status = 'Not Crawled' AND platform = 'facebook'""") # AND platform='twitter'
+    videos = c.fetchall()#[:10000]
     shuffle(videos)
 
     pool = Pool(16)
     crawling_progress = CrawlingProgress(len(videos), update_every=100)
     for video in pool.imap_unordered(download_video, videos):
-        # TODO we dont need to extract and save video_id here anymore
-        query = ("UPDATE videos SET %s" % postgres_helper.dict_mogrifying_string(video)) + " WHERE url=%(url)s"
+        print(video["crawling_status"])
+        query = ("UPDATE videos SET %s" % postgres_helper.dict_mogrifying_string(video)) + " WHERE id=%(id)s"
         c.execute(query, video)
         conn.commit()
         crawling_progress.inc(by=1)

@@ -11,10 +11,8 @@ LENGTH_CUTOFF = 15*60*1000  # Nothing longer than 15 minutes TODO make sure the 
 SIZE_CUTOFF = 100000000  # Nothing above 100 MB
 
 def get_path(platform="youtube"):
-    path = os.environ["DATA_PATH"] + "/raw/videos/%s/" % platform
-    if not os.path.exists(path):
-        os.makedirs(path)
-    return path
+    # don't create folders here, since this is used in threads
+    return os.environ["DATA_PATH"] + "/raw/videos/%s/" % platform
 
 def get_ffprobe_json(file):
     command = ["ffprobe",

@@ -22,11 +22,11 @@ def download(youtube_video_id):
 
     try:
         video_path = video_helper.get_path("youtube")
-        video_file = "%s/%s.mp4" % (video_path, youtube_video_id)
+        video_file = video_path + youtube_video_id + ".%(ext)s"
         ydl_opts = {
             # Download smallest file but not less then 240p (so not 144p for example)
-            'format': 'worst[height>=240]',  # best[height<=360][ext=mp4]
-            'outtmpl': video_file,
+            'format': 'worst[height>=240][ext=mp4]',  # best[height<=360][ext=mp4]
+            'outtmpl': video_path + youtube_video_id + ".%(ext)s",
             'quiet': True,
             'logger': QuietLogger()
         }

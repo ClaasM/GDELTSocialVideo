@@ -23,7 +23,7 @@ def download(facebook_video_id):
     ret = dict()
     user_name, video_id = facebook_video_id.split("/")
     try:
-        video_path = video_helper.get_path("facebook")
+        video_path = os.path.join(video_helper.get_path("facebook"), user_name)
         url = "https://www.facebook.com/%s/videos/%s" % (user_name, video_id)
         res = requests.get(url, timeout=5, allow_redirects=True)
         if res.status_code == 200:
@@ -37,7 +37,10 @@ def download(facebook_video_id):
                 ret["views"] = int(re.findall("viewCount:\"([0-9,]*)\",", res.text)[0].replace(",", ""))
 
                 r = requests.get(mp4_url_occurences[0], stream=True)
-                video_file = os.path.join(video_path, facebook_video_id + ".mp4")
+                if not os.path.exists(video_path):
+                    # Every user has its own path
+                    os.makedirs(video_path)
+                video_file = video_path + "/" + video_id + ".mp4"
                 with open(video_file, 'wb+') as file:
                     for chunk in r.iter_content(chunk_size=1024):
                         if chunk:
