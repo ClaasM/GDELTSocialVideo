@@ -1,6 +1,7 @@
 from multiprocessing import Pool
 from random import shuffle
 
+import sys
 import psycopg2
 
 from src.data.postgres import postgres_helper
@@ -38,6 +39,9 @@ def run():
     pool = Pool(16)
     crawling_progress = CrawlingProgress(len(videos), update_every=100)
     for video in pool.imap_unordered(download_video, videos):
+        if video["crawling_status"] == "Player Config: 429":
+            print("Twitter rate limit hit. Try again in 15 minutes")
+            sys.exit(1)
         print(video["crawling_status"])
         query = ("UPDATE videos SET %s" % postgres_helper.dict_mogrifying_string(video)) + " WHERE id=%(id)s"
         c.execute(query, video)
