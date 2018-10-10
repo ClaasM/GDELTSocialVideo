@@ -1,5 +1,6 @@
 import os
 import re
+import traceback
 
 import youtube_dl
 
@@ -25,37 +26,48 @@ def download(youtube_video_id):
         video_file = video_path + youtube_video_id + ".mp4"
         ydl_opts = {
             # Download smallest file but not less then 240p (so not 144p for example)
-            'format': 'worst[height>=240][ext=mp4]',  # best[height<=360][ext=mp4]
+            # TODO the alternatives might not be needed since its always available in mp4
+            'format': 'worst[height>=240][ext=mp4]/worst[height>=240]/worst',  # best[height<=360][ext=mp4]
             'outtmpl': video_file,
             'quiet': True,
-            'logger': QuietLogger()
+            'logger': QuietLogger(),
+            # Make 100% sure everything is mp4 in the end
+            # TODO might not be needed
+            #'postprocessors': [{
+            #    'key': 'FFmpegVideoConvertor',
+            #    'preferedformat': 'mp4'
+            # }]
         }
 
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ret = dict()
             info = ydl.extract_info(youtube_video_id, download=False)
 
-            ret["likes"] = info["like_count"]
-            ret["views"] = info["view_count"]
-            ret["duration"] = info["duration"] * 1000
-            # Youtube-dl does not extract these at this point, neither does pytube.
-            ret["comments"] = -1
-            ret["shares"] = -1
+            if "_type" not in info or info["_type"] != "playlist":
 
-            if ret["duration"] <= video_helper.LENGTH_CUTOFF:
-                # Only download if its not too long
-                ydl.extract_info(youtube_video_id, download=True)
-                ffprobe = video_helper.get_ffprobe_json(video_file)
-                size = int(ffprobe['format']['size'])
+                # Likes might be disabled
+                ret["likes"] = info["like_count"] if "like_count" in info else -1
+                ret["views"] = info["view_count"] if "view_count" in info else -1
+                ret["duration"] = info["duration"] * 1000
+                # Youtube-dl does not extract these at this point, neither does pytube.
+                ret["comments"] = -1
+                ret["shares"] = -1
 
-                if size <= video_helper.SIZE_CUTOFF:
-                    ret["crawling_status"] = "Success"
-                else:  # File is too big.
-                    os.remove(video_file)
-                    ret["crawling_status"] = "Too big"
-            else:  # Video is too long.
-                os.remove(video_file)
-                ret["crawling_status"] = "Too long"
+                if ret["duration"] <= video_helper.LENGTH_CUTOFF:
+                    # Only download if its not too long
+                    ydl.extract_info(youtube_video_id, download=True)
+                    ffprobe = video_helper.get_ffprobe_json(video_file)
+                    size = int(ffprobe['format']['size'])
+
+                    if size <= video_helper.SIZE_CUTOFF:
+                        ret["crawling_status"] = "Success"
+                    else:  # File is too big.
+                        os.remove(video_file)
+                        ret["crawling_status"] = "Too big"
+                else:  # Video is too long.
+                    ret["crawling_status"] = "Too long"
+            else:
+                ret["crawling_status"] = "Is stream recording"
     except Exception as e:
         # traceback.print_exc()
         ret["crawling_status"] = str(e)[:100]  # to prevent filling the db with stack traces

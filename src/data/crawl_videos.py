@@ -32,9 +32,11 @@ def run():
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     # TODO or Player Config: 429, or Player Config: 403 when doing this for twitter
-    c.execute("""SELECT id, platform FROM videos WHERE crawling_status = 'Not Crawled' AND platform = 'facebook'""") # AND platform='twitter'
+    c.execute("""SELECT id, platform FROM videos WHERE (crawling_status LIKE  '%list index%' OR crawling_status LIKE  '%Connection%' OR crawling_status LIKE  '%format%') AND platform = 'facebook'""") # AND platform='twitter'
     videos = c.fetchall()#[:10000]
     shuffle(videos)
+
+    print(len(videos))
 
     pool = Pool(16)
     crawling_progress = CrawlingProgress(len(videos), update_every=100)

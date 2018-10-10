@@ -45,7 +45,7 @@ def download(tweet_id):
         # 1042178736261685249
         # 1042230193807613957
         # ...
-        guest_token = "1049448387702083584"
+        guest_token = "1049750915719340034"
         # Talk to the API to get the m3u8 URL using the token just extracted
         player_config_url = 'https://api.twitter.com/1.1/videos/tweet/config/%s.json' % tweet_id
         player_config_response = requests.get(player_config_url,

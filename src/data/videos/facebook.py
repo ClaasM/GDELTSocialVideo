@@ -25,6 +25,7 @@ def download(facebook_video_id):
     try:
         video_path = os.path.join(video_helper.get_path("facebook"), user_name)
         url = "https://www.facebook.com/%s/videos/%s" % (user_name, video_id)
+
         res = requests.get(url, timeout=5, allow_redirects=True)
         if res.status_code == 200:
             # Alternatively, theres also hd_src and both with _no_ratelimit postfix
@@ -34,7 +35,12 @@ def download(facebook_video_id):
                 ret["comments"] = int(re.findall("commentcount:([0-9]*),", res.text)[0])
                 ret["shares"] = int(re.findall("sharecount:([0-9]*),", res.text)[0])
                 ret["likes"] = int(re.findall("likecount:([0-9]*),", res.text)[0])
-                ret["views"] = int(re.findall("viewCount:\"([0-9,]*)\",", res.text)[0].replace(",", ""))
+                view_count = re.findall("viewCount:\"([0-9,]*)\",", res.text)
+                # Number of views are not always present
+                if len(view_count) == 1:
+                    ret["views"] = int(view_count[0].replace(",", ""))
+                else:
+                    ret["views"] = -1
 
                 r = requests.get(mp4_url_occurences[0], stream=True)
                 if not os.path.exists(video_path):
