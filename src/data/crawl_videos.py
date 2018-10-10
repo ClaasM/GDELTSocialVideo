@@ -32,7 +32,7 @@ def run():
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     # TODO or Player Config: 429, or Player Config: 403 when doing this for twitter
-    c.execute("""SELECT id, platform FROM videos WHERE (crawling_status LIKE  '%list index%' OR crawling_status LIKE  '%Connection%' OR crawling_status LIKE  '%format%') AND platform = 'facebook'""") # AND platform='twitter'
+    c.execute("""SELECT id, platform FROM videos WHERE crawling_status='Not Crawled' AND platform = 'facebook'""") # AND platform='twitter'
     videos = c.fetchall()#[:10000]
     shuffle(videos)
 
@@ -44,7 +44,6 @@ def run():
         if video["crawling_status"] == "Player Config: 429":
             print("Twitter rate limit hit. Try again in 15 minutes")
             sys.exit(1)
-        print(video["crawling_status"])
         query = ("UPDATE videos SET %s" % postgres_helper.dict_mogrifying_string(video)) + " WHERE id=%(id)s"
         c.execute(query, video)
         conn.commit()

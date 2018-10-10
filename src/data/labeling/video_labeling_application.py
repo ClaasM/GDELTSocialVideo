@@ -11,6 +11,9 @@ TODO print introduction or something
 TODO also print total number of videos already labeled
 
 TODO maybe use moviepy: my_clip.preview(fps=15, audio=False) # don't generate/play the audio.
+
+
+Modified from https://pythonprogramminglanguage.com/pyqt5-video-widget/
 """
 
 import sys
@@ -31,6 +34,7 @@ video_classes = {
     2: "No",
 }
 
+
 class VideoLabelingApplication(QMainWindow):
     def __init__(self, parent=None):
         super(VideoLabelingApplication, self).__init__(parent)
@@ -47,10 +51,9 @@ class VideoLabelingApplication(QMainWindow):
         self.positionSlider.setRange(0, 0)
         self.positionSlider.sliderMoved.connect(self.set_position)
 
-        self.info_label = QLabel()
-        self.info_label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
-        classes_str = "\n".join(str(key) + ": " + video_classes[key] for key in video_classes)
-        self.info_label.setText("Is this video amateur footage?\n" + classes_str)
+        info_label = QLabel()
+        info_label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        info_label.setText("Is this footage showing the event and is recorded by a handheld device?")
 
         # Create a widget for window contents
         wid = QWidget(self)
@@ -65,7 +68,9 @@ class VideoLabelingApplication(QMainWindow):
         class_button_layout = QHBoxLayout()
         class_button_layout.setContentsMargins(0, 0, 0, 0)
         for key in video_classes:
-            button = QPushButton(str(key))
+            # The ampersand creates a shortcut for that button (Alt + <key>)
+            button = QPushButton("%s (%s)" % (video_classes[key], str(key)))
+
             button.clicked.connect(self.classified_as(key))
             class_button_layout.addWidget(button)
 
@@ -76,8 +81,8 @@ class VideoLabelingApplication(QMainWindow):
         layout = QVBoxLayout()
         layout.addWidget(video_widget)
         layout.addLayout(control_layout)
+        layout.addWidget(info_label)
         layout.addLayout(class_button_layout)
-        layout.addWidget(self.info_label)
 
         # Set widget to contain window contents
         wid.setLayout(layout)
@@ -95,28 +100,31 @@ class VideoLabelingApplication(QMainWindow):
         # Create a cursor for every video that hasn't been labeled yet.
         self.c.execute("""SELECT videos.id, videos.platform FROM videos
                                   LEFT JOIN labeled_videos  ON (labeled_videos.id, labeled_videos.platform) = (videos.id, videos.platform)
-                                  WHERE labeled_videos.relevant IS NULL AND videos.crawling_status='Success'""")
+                                  WHERE labeled_videos.relevant IS NULL AND videos.crawling_status='Success' AND videos.platform='facebook'""")
         videos = self.c.fetchall()
         shuffle(videos)
         self.videos = iter(videos)
 
         self.next_video()
 
+        self.session_count = 0
+
     def next_video(self):
-        video_id, platform = next(self.videos)
+        self.current_video = next(self.videos)
+        video_id, platform = self.current_video
         video_path = video_helper.get_path(platform) + "/" + video_id + ".mp4"
-        # TODO remove
-        video_path = "/Users/claasmeiners/PycharmProjects/GDELTSocialVideo/testvideo"
         print(video_path)
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(video_path)))
         self.mediaPlayer.play()
 
     def classified_as(self, label):
         def on_click():
-            print("Classified as %d" % label)
-            # self.c.execute("INSERT INTO labeled_videos (platform, id, relevant) VALUES (%s, %s, %s)",
-            #          [platform, video_id, relevance])
-            # self.conn.commit()
+            self.session_count += 1
+            print("%d Classified as %d" % (self.session_count, label))
+            video_id, platform = self.current_video
+            self.c.execute("INSERT INTO labeled_videos (platform, id, relevant) VALUES (%s, %s, %s)",
+                           [platform, video_id, label])
+            self.conn.commit()
             self.next_video()
 
         return on_click
@@ -148,7 +156,6 @@ class VideoLabelingApplication(QMainWindow):
         self.mediaPlayer.setPosition(position)
 
     def handle_error(self):
-        self.playButton.setEnabled(False)
         print(self.mediaPlayer.errorString())
 
 

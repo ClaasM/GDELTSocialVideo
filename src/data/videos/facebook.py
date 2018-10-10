@@ -51,7 +51,6 @@ def download(facebook_video_id):
                     for chunk in r.iter_content(chunk_size=1024):
                         if chunk:
                             file.write(chunk)
-
                 ffprobe = video_helper.get_ffprobe_json(video_file)
                 ret["duration"] = int(float(ffprobe['format']['duration']) * 1000)
                 size = int(ffprobe['format']['size'])
