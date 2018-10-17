@@ -1,123 +1,53 @@
-# PyQt5 Video player
-#!/usr/bin/env python
+# crawl any websites that dont contain </html>
+import re
+from multiprocessing.pool import Pool
 
-from PyQt5.QtCore import QDir, Qt, QUrl
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
-from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
-        QPushButton, QSizePolicy, QSlider, QStyle, QVBoxLayout, QWidget)
-from PyQt5.QtWidgets import QMainWindow,QWidget, QPushButton, QAction
-from PyQt5.QtGui import QIcon
+import htmlmin
+import psycopg2
 import sys
 
-class VideoWindow(QMainWindow):
+import requests
 
-    def __init__(self, parent=None):
-        super(VideoWindow, self).__init__(parent)
-        self.setWindowTitle("PyQt Video Player Widget Example - pythonprogramminglanguage.com") 
+from src.data.videos import video as video_helper
+from src.data.websites import website as website_helper
+from src.visualization.console import CrawlingProgress
 
-        self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+minifier = htmlmin.Minifier(remove_comments=True, remove_all_empty_space=True, reduce_boolean_attributes=True,
+                            remove_empty_space=True)
 
-        videoWidget = QVideoWidget()
+def crawl_article(article):
+    url, = article
+    try:
+        text = website_helper.load(url)
+        if "</html>" not in text:
+            res = requests.get(url, headers={"user-agent": "Mozilla"})
+            if res.status_code >= 300:
+                print(res.status_code)
+                pass
+            else:
+                print("Success!")
+                website_helper.save(minifier.minify(res.text), url)
+    except Exception as e:
+        # The website was not successfully crawled, it should be tried again
+        #print(e)
+        return str(e)
 
-        self.playButton = QPushButton()
-        self.playButton.setEnabled(False)
-        self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
-        self.playButton.clicked.connect(self.play)
+    return "Success"
 
-        self.positionSlider = QSlider(Qt.Horizontal)
-        self.positionSlider.setRange(0, 0)
-        self.positionSlider.sliderMoved.connect(self.setPosition)
+def run():
+    conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
 
-        self.errorLabel = QLabel()
-        self.errorLabel.setSizePolicy(QSizePolicy.Preferred,
-                QSizePolicy.Maximum)
+    c = conn.cursor()
+    c.execute("SELECT DISTINCT source_url from article_videos")
+    articles = c.fetchall()
 
-        # Create new action
-        openAction = QAction(QIcon('open.png'), '&Open', self)        
-        openAction.setShortcut('Ctrl+O')
-        openAction.setStatusTip('Open movie')
-        openAction.triggered.connect(self.openFile)
+    crawling_progress = CrawlingProgress(len(articles), update_every=10000)
 
-        # Create exit action
-        exitAction = QAction(QIcon('exit.png'), '&Exit', self)        
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(self.exitCall)
+    # parallel crawling and parsing to speed things up
+    with Pool(32)  as pool:  # 16 seems to be around optimum
+        for _ in pool.imap_unordered(crawl_article, articles, chunksize=100):
+            crawling_progress.inc(1)
 
-        # Create menu bar and add action
-        menuBar = self.menuBar()
-        fileMenu = menuBar.addMenu('&File')
-        #fileMenu.addAction(newAction)
-        fileMenu.addAction(openAction)
-        fileMenu.addAction(exitAction)
 
-        # Create a widget for window contents
-        wid = QWidget(self)
-        self.setCentralWidget(wid)
-
-        # Create layouts to place inside widget
-        controlLayout = QHBoxLayout()
-        controlLayout.setContentsMargins(0, 0, 0, 0)
-        controlLayout.addWidget(self.playButton)
-        controlLayout.addWidget(self.positionSlider)
-
-        layout = QVBoxLayout()
-        layout.addWidget(videoWidget)
-        layout.addLayout(controlLayout)
-        layout.addWidget(self.errorLabel)
-
-        # Set widget to contain window contents
-        wid.setLayout(layout)
-
-        self.mediaPlayer.setVideoOutput(videoWidget)
-        self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
-        self.mediaPlayer.position_changed.connect(self.positionChanged)
-        self.mediaPlayer.durationChanged.connect(self.durationChanged)
-        self.mediaPlayer.error.connect(self.handleError)
-
-    def openFile(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open Movie",
-                QDir.homePath())
-
-        if fileName != '':
-            self.mediaPlayer.setMedia(
-                    QMediaContent(QUrl.fromLocalFile(fileName)))
-            self.playButton.setEnabled(True)
-
-    def exitCall(self):
-        sys.exit(app.exec_())
-
-    def play(self):
-        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
-            self.mediaPlayer.pause()
-        else:
-            self.mediaPlayer.play()
-
-    def mediaStateChanged(self, state):
-        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
-            self.playButton.setIcon(
-                    self.style().standardIcon(QStyle.SP_MediaPause))
-        else:
-            self.playButton.setIcon(
-                    self.style().standardIcon(QStyle.SP_MediaPlay))
-
-    def positionChanged(self, position):
-        self.positionSlider.setValue(position)
-
-    def durationChanged(self, duration):
-        self.positionSlider.setRange(0, duration)
-
-    def setPosition(self, position):
-        self.mediaPlayer.setPosition(position)
-
-    def handleError(self):
-        self.playButton.setEnabled(False)
-        self.errorLabel.setText("Error: " + self.mediaPlayer.errorString())
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    player = VideoWindow()
-    player.resize(640, 480)
-    player.show()
-    sys.exit(app.exec_())
+if __name__ == "__main__":
+    run()
