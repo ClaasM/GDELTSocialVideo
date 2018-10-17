@@ -19,8 +19,8 @@ matplotlib
 pandas
 beautifulsoup4
 nltk
-#tensorflow==1.4.0
-#keras==2.0.8
+# tensorflow==1.4.0
+keras==2.0.8
 # We need pytube 9.2.3 to get the video length, its not on pip though
 https://github.com/nficano/pytube/archive/master.zip
 validators

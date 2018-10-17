@@ -1,6 +1,6 @@
 /*
-Create a database called "gdelt" first:
-CREATE DATABASE gdelt;
+Create a database called "gdelt_social_video" first:
+CREATE DATABASE gdelt_social_video;
 Connect to it:
 \c gdelt
 Then run this script to initialize it.
