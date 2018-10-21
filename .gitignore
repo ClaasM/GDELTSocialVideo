@@ -15,7 +15,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-src/boilerpipe/build/
+../video_news_classification/src/boilerpipe/build/
 develop-eggs/
 dist/
 downloads/
