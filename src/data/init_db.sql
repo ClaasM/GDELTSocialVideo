@@ -114,6 +114,7 @@ CREATE TABLE IF NOT EXISTS article_videos (
   source_name     TEXT NOT NULL,
   platform        TEXT NOT NULL,
   video_id       TEXT NOT NULL,
+
   FOREIGN KEY (source_url) REFERENCES articles (source_url),
   FOREIGN KEY (video_id) REFERENCES videos (video_id)
 );
@@ -182,6 +183,10 @@ CREATE INDEX IF NOT EXISTS  articles_crawling_status_index
   ON public.articles (crawling_status);
 CREATE INDEX IF NOT EXISTS  article_videos_platform_index
   ON public.article_videos (platform);
+CREATE INDEX IF NOT EXISTS  article_videos_source_name_index
+  ON public.article_videos (source_name);
+CREATE INDEX IF NOT EXISTS  article_videos_video_id_index
+  ON public.article_videos USING HASH (video_id);
 CREATE INDEX IF NOT EXISTS  article_videos_source_name_index
   ON public.article_videos (source_name);
 CREATE INDEX IF NOT EXISTS  source_twitter_relevant_index
