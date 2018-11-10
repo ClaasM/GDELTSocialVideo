@@ -12,6 +12,7 @@ This is not using any foreign keys on mentions and events because:
 
 -- TABLES
 
+-- TODO this whole table might not be necessary
 CREATE TABLE IF NOT EXISTS events (-- They are called "export" in the GDELT dataset, but events makes more sense
   -- Event ID and date attributes
   global_event_id          BIGINT PRIMARY KEY NOT NULL,
@@ -148,6 +149,11 @@ CREATE TABLE  IF NOT EXISTS sources (
   facebook_sum          INT,
   facebook_count        INT,
   facebook_sum_distinct INT,
+  -- <platform>_std_dev       FLOAT,
+  -- <platform>_sum           INT,
+  -- <platform>_count         INT,
+  -- <platform>_sum_distinct  INT,
+  -- Relevancy is determined by the classifier
   -- Relevancy is determined by the classifier
   twitter_relevant            BOOL,
   youtube_relevant            BOOL,

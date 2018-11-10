@@ -68,6 +68,9 @@ UPDATE articles SET crawling_status='Not Crawled' WHERE crawling_status <> 'Not 
 DELETE FROM article_videos
 DELETE FROM sources;
 
+Start the Crawling:
+python3 src/data/_crawlers/website_crawler.py
+
 **For the source relevancy classifier (see below) to work, you need at least ~1M crawled articles. Otherwise there will not be enough articles/videos per source to classify it.**
 
 ### Crawling Videos
