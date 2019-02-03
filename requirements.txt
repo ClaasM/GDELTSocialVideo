@@ -14,7 +14,7 @@ youtube_dl
 # other external requirements
 # numpy
 # Cython
-# sklearn
+sklearn
 matplotlib
 pandas
 beautifulsoup4

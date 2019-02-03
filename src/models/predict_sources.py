@@ -13,35 +13,34 @@ from src import util
 
 def run():
     platform = "youtube"  # Only doing this for youtube now
-    clf_path = os.path.join(os.environ["MODEL_PATH"], "svmrbf_1536694057")
-    trained_on = ["youtube_video_std_dev", "youtube_video_distinct_to_sum"]
-
+    clf_path = os.path.join(os.environ["MODEL_PATH"], "svmrbf_1549217180")
+    trained_on = ["youtube_average", "youtube_distinct_to_sum"]
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     # Create the new column
-    c.execute('ALTER TABLE hosts ADD COLUMN IF NOT EXISTS %s_relevant BOOL' % platform)
+    # c.execute('ALTER TABLE sources ADD COLUMN IF NOT EXISTS %s_relevant BOOL' % platform)
     # Create indices if they do not exist to speed things up a little
-    c.execute('''CREATE INDEX IF NOT EXISTS articles_hostname_index ON public.articles (hostname);''')
+    c.execute('''CREATE INDEX IF NOT EXISTS articles_source_name_index ON public.articles (source_name);''')
     conn.commit()
 
     # Compute the features the same way as in the modeling doc
     # TODO make it DRY!
-    hosts = pd.read_sql_query('SELECT * FROM hosts WHERE %s_video_count > 0' % platform, con=conn)
-    hosts = hosts[["hostname",
+    hosts = pd.read_sql_query('SELECT * FROM sources WHERE %s_count > 0' % platform, con=conn)
+    hosts = hosts[["source_name",
                    "article_count",
-                   "%s_video_sum" % platform,
-                   "%s_video_sum_distinct" % platform,
-                   "%s_video_count" % platform,
-                   "%s_video_std_dev" % platform,
+                   "%s_sum" % platform,
+                   "%s_sum_distinct" % platform,
+                   "%s_count" % platform,
+                   "%s_std_dev" % platform,
                    "%s_relevant" % platform]]
-    hosts["%s_video_average" % platform] = \
-        hosts["%s_video_sum" % platform] / hosts["article_count"]
-    hosts["%s_video_average_distinct" % platform] = \
-        hosts["%s_video_sum_distinct" % platform] / hosts["article_count"]
-    hosts["%s_video_distinct_to_sum" % platform] = \
-        hosts["%s_video_sum_distinct" % platform] / hosts["%s_video_sum" % platform]
-    hosts["%s_video_percentage" % platform] = \
-        hosts["%s_video_count" % platform] / hosts["article_count"]
+    hosts["%s_average" % platform] = \
+        hosts["%s_sum" % platform] / hosts["article_count"]
+    hosts["%s_average_distinct" % platform] = \
+        hosts["%s_sum_distinct" % platform] / hosts["article_count"]
+    hosts["%s_distinct_to_sum" % platform] = \
+        hosts["%s_sum_distinct" % platform] / hosts["%s_sum" % platform]
+    hosts["%s_percentage" % platform] = \
+        hosts["%s_count" % platform] / hosts["article_count"]
 
     print(len(hosts))
 
@@ -53,8 +52,8 @@ def run():
         # print(platform, prediction[index], row["hostname"])
         # Website url may not be unique depending on the table, but it doesn't matter in this case
         classifications[prediction[index]] += 1
-        c.execute('UPDATE hosts SET %s_relevant=%s WHERE hostname=\'%s\''
-                  % (platform, prediction[index], row["hostname"]))
+        c.execute('UPDATE sources SET %s_relevant=%s WHERE source_name=\'%s\''
+                  % (platform, prediction[index], row["source_name"]))
         conn.commit()
     print(classifications)
 
