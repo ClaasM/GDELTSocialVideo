@@ -43,6 +43,7 @@ def crawl_article(article):
     except Exception as e:
         # The website was not successfully crawled, it should be tried again
         status = str(e)
+        # print(status)
 
     return index, status, videos
 
@@ -51,7 +52,7 @@ def run():
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     # Only crawl articles that have not yet been crawled
-    c.execute("SELECT source_url, source_name FROM articles WHERE crawling_status <> 'Success'")
+    c.execute("SELECT source_url, source_name FROM articles WHERE crawling_status<>'Success'")
     articles = c.fetchall()
     crawling_progress = CrawlingProgress(len(articles), update_every=10000)
     # parallel crawling and parsing to speed things up

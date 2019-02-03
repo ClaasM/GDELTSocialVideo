@@ -5,14 +5,15 @@ import re
 import urllib
 from urllib.parse import urlparse
 
+# TODO clean up all the unneccessary stuff
 # DO NOT IMPORT NLTK ANYWHERE THAT USES MULTIPROCESSING! https://github.com/nltk/nltk/issues/947
 # import nltk
 from xml import etree
 
 from bs4 import BeautifulSoup
-from langdetect import detect
 from src import util
 from src.data.videos import youtube, twitter, facebook
+
 # from src.features.HTML_sentence_tokenizer import HTMLSentenceTokenizer
 
 raw_path = os.environ["DATA_PATH"] + "/raw/articles/"
@@ -47,35 +48,6 @@ def download_and_save(row):
             return str(e)
 
 
-def extract_sentences_and_save(file):
-    """
-    Removes anything unnecessary from an HTML Document. Keeps an array of sentences.
-    :param doc:
-    :return:
-    """
-    filename = file.split('/')[-1]
-
-    try:
-        doc = util.load_gzip_pickle(file)
-
-        bs_doc = BeautifulSoup(doc, features="lxml")
-
-        # remove some tags that aren't rendered, including their content
-        # From https://www.w3schools.com/tags/ref_byfunc.asp
-        programming_tags = ['script', 'noscript', 'applet', 'embed', 'object', 'param']
-        meta_tags = ['head', 'meta', 'base', 'basefont']
-        other_tags = ['data', 'style', 'iframe']
-        [x.extract() for x in bs_doc.findAll(programming_tags + meta_tags + other_tags)]
-
-        sentences = HTMLSentenceTokenizer().feed(str(bs_doc))
-
-        # Done preprocessing. Save tokens
-        util.save_gzip_pickle("%s/%s" % (sentences_path, filename), sentences)
-        return "Success"
-    except Exception as e:
-        return str(e)
-
-
 def tokenize_and_save(file):
     """
     TODO
@@ -102,22 +74,6 @@ def tokenize_and_save(file):
         util.save_gzip_pickle("%s/%s" % (tokens_path, filename), word_tokens)
 
         return "Success"
-    except Exception as e:
-        return str(e)
-
-
-def save_if_english(file):
-    """
-    :param doc:
-    :return:
-    """
-    filename = file.split("/")[-1]
-    try:
-        sentences_array = util.load_gzip_pickle(file)
-        language = detect(' '.join(sentences_array))
-        if language == 'en':
-            util.save_gzip_pickle("%s/%s" % (sentences_english_path, filename), sentences_array)
-        return language
     except Exception as e:
         return str(e)
 
@@ -281,6 +237,8 @@ def url_decode(filename):
 
 def save(data, url):
     file_path, file_name = get_article_filepath(url)
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
     with gzip.open(file_path + "/" + file_name, "wb+") as file:
         file.write(data.encode("utf-8"))
 

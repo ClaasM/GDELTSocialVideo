@@ -1,4 +1,4 @@
-urllib3
+# urllib3
 youtube_dl
 # local package
 -e .
@@ -12,32 +12,35 @@ youtube_dl
 #python-dotenv>=0.5.1
 
 # other external requirements
-numpy
-Cython
-sklearn
+# numpy
+# Cython
+# sklearn
 matplotlib
 pandas
 beautifulsoup4
-nltk
+requests
+# nltk
 # tensorflow==1.4.0
-keras==2.0.8
+# keras==2.0.8
 # We need pytube 9.2.3 to get the video length, its not on pip though
-https://github.com/nficano/pytube/archive/master.zip
+# https://github.com/nficano/pytube/archive/master.zip
 validators
-langdetect
-html5lib
+# langdetect
+# html5lib
 jupyter
 lxml
-graphviz
+# graphviz
 psycopg2
-AsIs
+# AsIs
 seaborn
 htmlmin
-tqdm
-ffprobe
+# tqdm
+# ffprobe
 
 # Boilerpipe stuff
 # TODO Make sure boilerpipe setup.py is executed correctly
-JPype1
-chardet
-moviepy
+# JPype1
+# chardet
+# moviepy
+
+m3u8
