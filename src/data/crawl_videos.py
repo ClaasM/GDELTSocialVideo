@@ -32,7 +32,7 @@ def run():
     conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
     c = conn.cursor()
     # TODO or Player Config: 429, or Player Config: 403 when doing this for twitter
-    c.execute("""SELECT id, platform FROM videos WHERE crawling_status='Not Crawled' AND platform = 'facebook'""") # AND platform='twitter'
+    c.execute("""SELECT id, platform FROM videos WHERE crawling_status='Not Crawled' AND platform = 'youtube'""") # AND platform='twitter'
     videos = c.fetchall()#[:10000]
     shuffle(videos)
 
