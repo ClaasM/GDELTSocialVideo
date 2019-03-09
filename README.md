@@ -1,3 +1,9 @@
+TODO:
+
+"Since the system is subject to change, and as such the intructions how to start up, shut down and troubleshoot the components might also change, the instructions are part of the version control as per the \textit{Packaging} requirement."
+
+
+
 # GDELT Articles & Amateur Video Extraction
 
 This project can be used to extract Youtube videos, Facebook videos and Twitter tweets (plus attached videos, if any)
