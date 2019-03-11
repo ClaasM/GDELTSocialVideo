@@ -40,11 +40,6 @@ def download(tweet_id):
         bearer_token = bearer_token.group(0)
         # For now I'm manually getting one by going to https://twitter.com/i/videos/tweet/1041730759613046787
         # And looking at the request headers for the config request.
-        # TODO figure out how those are generated or how they can be extracted
-        # past x-guest-tokens:
-        # 1042178736261685249
-        # 1042230193807613957
-        # ...
         guest_token = "1049750915719340034"
         # Talk to the API to get the m3u8 URL using the token just extracted
         player_config_url = 'https://api.twitter.com/1.1/videos/tweet/config/%s.json' % tweet_id
@@ -97,7 +92,6 @@ def download(tweet_id):
                     ts_m3u8_response = requests.get(video_host + correct_res.uri)
                     ts_m3u8_parse = m3u8.loads(ts_m3u8_response.text)
 
-                    # TODO convert to mp4
                     video_file = os.path.join(video_path, tweet_id + ".ts")
                     with open(video_file, 'ab+') as wfd:
                         for ts_uri in ts_m3u8_parse.segments.uri:
@@ -135,7 +129,6 @@ def get_id_from_url(url):
     return url.split("/")[-1].split("?")[0]
 
 
-# TODO turn these into test cases
 no_video = "https://twitter.com/Ocasio2018/status/1009049756377714688?ref_src=twsrc%5Etfw"
 view_count_none = 'https://twitter.com/TriniGoddess__/status/1013867196790067200?ref_src=twsrc%5Etfw'
 view_count_k = 'https://twitter.com/itv2/status/1020051221850263553?ref_src=twsrc%5Etfw'

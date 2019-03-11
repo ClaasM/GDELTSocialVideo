@@ -5,7 +5,6 @@ import re
 import urllib
 from urllib.parse import urlparse
 
-# TODO clean up all the unneccessary stuff
 # DO NOT IMPORT NLTK ANYWHERE THAT USES MULTIPROCESSING! https://github.com/nltk/nltk/issues/947
 # import nltk
 from xml import etree
@@ -49,10 +48,6 @@ def download_and_save(row):
 
 
 def tokenize_and_save(file):
-    """
-    TODO
-    :return:
-    """
     filename = file.split('/')[-1]
 
     try:
@@ -111,7 +106,6 @@ sentence_upper_limit = 200
 def save_if_passes_filter(file):
     """
     Loads the file and checks if it passes the filter. If so, its saved to the 'processed' directory
-    TODO maybe add check for casing?
     :param file:
     :return:
     """
@@ -155,7 +149,7 @@ def crawl(url):
 # That is done afterwards, when processing the data.
 FB_VIDEO_IDENTIFIER = "www.facebook.com/plugins/video.php"
 YT_VIDEO_IDENTIFIER = "www.youtube.com/embed"
-TWITTER_IDENTIFIER_REGEX = r'twitter.com/[a-zA-Z0-9_]{1,15}/status'  # TODO cite source for this
+TWITTER_IDENTIFIER_REGEX = r'twitter.com/[a-zA-Z0-9_]{1,15}/status'
 
 
 def get_video_sources_bs(soup):
@@ -254,7 +248,7 @@ FILE_ENDING = ".gzip"
 
 def get_article_filepath(url):
     """
-    we ignore the fragment identifier as per https://tools.ietf.org/html/rfc3986 TODO quote
+    we ignore the fragment identifier as per https://tools.ietf.org/html/rfc3986
     :param url:
     :return:
     """
@@ -271,10 +265,6 @@ def get_article_filepath(url):
     file_name += FILE_ENDING
     file_path = os.path.join(get_articles_path(), *path)
     return file_path, file_name
-
-
-# TODO test cases
-
 
 def get_articles_path():
     path = os.environ["DATA_PATH"] + "/raw/articles/"

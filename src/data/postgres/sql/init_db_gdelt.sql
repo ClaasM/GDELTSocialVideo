@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS events (-- They are called "export" in the GDELT data
   event_base_code          TEXT   NOT NULL,
   event_root_code          TEXT   NOT NULL,
   quad_class               INT    NOT NULL,
-  goldstein_scale          FLOAT, -- This is null in very rare cases (TODO statistic)
+  goldstein_scale          FLOAT, -- This is null in very rare cases
   num_mentions             INT    NOT NULL,
   num_sources              INT    NOT NULL,
   num_articles             INT    NOT NULL,

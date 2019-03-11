@@ -57,8 +57,6 @@ Start the crawling:
 
 `python3 src/data/crawl_articles.py`
 
-**For the source relevancy classifier (see below) to work, you need at least ~1M crawled articles. Otherwise there will not be enough articles/videos per source to classify it.**
-
 ### Crawling Videos
 
 Very similar to article crawling.

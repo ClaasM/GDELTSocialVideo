@@ -1,9 +1,5 @@
 import psycopg2
 
-"""
-TODO stuff like required columns, indexing, etc.
-"""
-
 SUCCESS = "Success"
 from psycopg2.extensions import AsIs
 

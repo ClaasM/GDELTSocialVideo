@@ -64,7 +64,6 @@ class SyncedCrawlingProgress:
 
 
 class TablePrinter:
-    # TODO use this in StatusVisualization
     def __init__(self, header=None):
         if header is None:
             header = ["Col 1", "Col 2", "Col 3"]

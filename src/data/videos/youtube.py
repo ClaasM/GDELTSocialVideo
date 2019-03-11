@@ -26,17 +26,10 @@ def download(youtube_video_id):
         video_file = video_path + youtube_video_id + ".mp4"
         ydl_opts = {
             # Download smallest file but not less then 240p (so not 144p for example)
-            # TODO the alternatives might not be needed since its always available in mp4
             'format': 'worst[height>=240][ext=mp4]/worst[height>=240]/worst',  # best[height<=360][ext=mp4]
             'outtmpl': video_file,
             'quiet': True,
-            'logger': QuietLogger(),
-            # Make 100% sure everything is mp4 in the end
-            # TODO might not be needed
-            #'postprocessors': [{
-            #    'key': 'FFmpegVideoConvertor',
-            #    'preferedformat': 'mp4'
-            # }]
+            'logger': QuietLogger()
         }
 
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
