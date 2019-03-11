@@ -1,7 +1,6 @@
 """
 Takes all found videos and filters for those that pass the classifier as "relevant"
-TODO and some more other filtering
-TODO write documentation
+The classifier is trained in the Source Exploration and Classification Notebook.
 """
 import os
 from urllib.parse import urlparse
@@ -24,7 +23,6 @@ def run():
     conn.commit()
 
     # Compute the features the same way as in the modeling doc
-    # TODO make it DRY!
     hosts = pd.read_sql_query('SELECT * FROM sources WHERE %s_count > 0' % platform, con=conn)
     hosts = hosts[["source_name",
                    "article_count",

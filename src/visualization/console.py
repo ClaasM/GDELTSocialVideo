@@ -1,8 +1,3 @@
-"""
-TODO this might be worth a separate package (or at least a gist)
-TODO use carriage return
-TODO create a test that consumes std.out
-"""
 import time
 from datetime import timedelta
 from multiprocessing import Value, Manager
@@ -69,7 +64,7 @@ class SyncedCrawlingProgress:
 
 
 class TablePrinter:
-    # TODO use this in CrawlingProgress
+    # TODO use this in StatusVisualization
     def __init__(self, header=None):
         if header is None:
             header = ["Col 1", "Col 2", "Col 3"]
@@ -88,9 +83,11 @@ class TablePrinter:
         string += str(values[-1]).center(COL_WIDTH)
         return string
 
-
-# TODO dry with the other CrawlingProgress
-class CrawlingProgress:
+"""
+Used to visualize the progress of crawling and other things that take time.
+Very versatile.
+"""
+class StatusVisualization:
     def __init__(self, total_count=1000, update_every=100000):
         # Variables that need to be synced across Threads
         self.count = 0

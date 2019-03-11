@@ -17,7 +17,7 @@ import htmlmin
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from bs4 import BeautifulSoup
 from src.data.websites import website as website_helper
-from src.visualization.console import CrawlingProgress
+from src.visualization.console import StatusVisualization
 
 ''' Some intialization TODO use the separating comments from the BA '''
 
@@ -54,7 +54,7 @@ def run():
     # Only crawl articles that have not yet been crawled
     c.execute("SELECT source_url, source_name FROM articles WHERE crawling_status<>'Success'")
     articles = c.fetchall()
-    crawling_progress = CrawlingProgress(len(articles), update_every=10000)
+    crawling_progress = StatusVisualization(len(articles), update_every=10000)
     # parallel crawling and parsing to speed things up
     with Pool(32)  as pool:  # 16 seems to be around optimum
         for (index, status, videos) in pool.imap_unordered(crawl_article, enumerate(articles), chunksize=100):

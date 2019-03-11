@@ -6,7 +6,7 @@ import psycopg2
 
 from src.data.postgres import postgres_helper
 from src.data.videos import youtube, twitter, facebook
-from src.visualization.console import CrawlingProgress
+from src.visualization.console import StatusVisualization
 
 
 def download_video(args):
@@ -39,7 +39,7 @@ def run():
     print(len(videos))
 
     pool = Pool(16)
-    crawling_progress = CrawlingProgress(len(videos), update_every=100)
+    crawling_progress = StatusVisualization(len(videos), update_every=100)
     for video in pool.imap_unordered(download_video, videos):
         if video["crawling_status"] == "Player Config: 429":
             print("Twitter rate limit hit. Try again in 15 minutes")

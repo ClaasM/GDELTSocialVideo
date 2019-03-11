@@ -13,7 +13,7 @@ TODO use crawling progress
 import os
 import urllib.request
 from multiprocessing import Pool
-from src.visualization.console import CrawlingProgress
+from src.visualization.console import StatusVisualization
 
 INTERESTING_COLLECTIONS = ["mentions", "export"]
 
@@ -57,7 +57,7 @@ def run(year, month):
         print("%d relevant files,\n %d malformed,\n %d already downloaded,\n %d now downloading...\n" \
               % (relevant_lines, malformed_lines, relevant_lines - len(urls), len(urls)))
 
-        crawling_progress = CrawlingProgress(len(urls), update_every=50)
+        crawling_progress = StatusVisualization(len(urls), update_every=50)
         with Pool(16) as pool:
             for _ in pool.imap_unordered(retrieve_and_save, urls):
                 crawling_progress.inc()

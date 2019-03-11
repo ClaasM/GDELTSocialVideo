@@ -24,7 +24,7 @@ import numpy as np
 import psycopg2
 from itertools import groupby
 from src.data.postgres import postgres_helper
-from src.visualization.console import CrawlingProgress
+from src.visualization.console import StatusVisualization
 
 
 def run():
@@ -35,7 +35,7 @@ def run():
     c.execute('SELECT source_name FROM sources')
     sources = c.fetchall()
 
-    progress = CrawlingProgress(total_count=len(sources), update_every=1000)
+    progress = StatusVisualization(total_count=len(sources), update_every=1000)
     for source in sources:
         source = source[0]
         features = dict()
