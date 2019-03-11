@@ -1,7 +1,5 @@
 """
 A small command line tool to make the labeling of relevancy of a a video for a certain topic easier.
-TODO print introduction or something
-TODO also print total number of articles
 """
 
 import psycopg2
@@ -50,7 +48,6 @@ if __name__ == "__main__":
                 counts = articles[url]
                 table_printer.print_row([counts["twitter"], counts["facebook"], counts["youtube"], url])
 
-            # TODO interate over platforms here
             print("Total articles: %d, with embedding(s): %d" % (article_count, len(articles)))
             twitter_relevance = input(
                 "Are the source's TWITTER tweets relevant? (1: Yes, 2: No (e.g. in sidebar), 3: No (user-created)), 4: No (other/not present) ") if "twitter" in found_platforms else -1
