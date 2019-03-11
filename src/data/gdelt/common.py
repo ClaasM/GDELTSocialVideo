@@ -2,7 +2,7 @@ import glob
 import os
 import pandas as pd
 
-from src.data.gdelt_event_2 import export
+from src.data.gdelt import export
 
 class RowIterator:
     def __init__(self, collection="export", header=export.HEADER):

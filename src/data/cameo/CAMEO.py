@@ -1,4 +1,3 @@
-# TODO maybe its worth it to put this in a separate Repo as well:
 # Cameo and actor codes in several consumable formats as well as a couple of relevant links for it
 
 L1 = {

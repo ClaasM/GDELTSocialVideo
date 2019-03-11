@@ -5,9 +5,6 @@ Downloads all exports and mentions for a month.
 Make sure a master file containing the requested dates is present.
 The current master file can be downloaded from: http://data.gdeltproject.org/gdeltv2/masterfilelist.txt
 See GDELT Docs for more info.
-
-TODO use crawling progress
-
 """
 
 import os

@@ -3,8 +3,6 @@
 -- Also, some columns are omitted to increase readability
 -- Cannot reference events since the event might've happened before the timeframe
 -- TABLES
--- TODO in the end, actually only import attributes that are actually used.
--- TODO maybe then this separate file is no longer required.
 
 -- CREATE TYPE PLATFORM AS ENUM ('facebook', 'youtube', 'twitter'); (not supported by the database visualization)
 

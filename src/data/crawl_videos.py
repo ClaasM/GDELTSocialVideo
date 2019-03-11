@@ -1,3 +1,6 @@
+"""
+Crawls all not-yet crawled videos
+"""
 from multiprocessing import Pool
 from random import shuffle
 
@@ -13,7 +16,6 @@ def download_video(args):
     video_id, platform = args
 
     try:
-        # TODO use subscripts here
         if platform == "youtube":
             video = youtube.download(video_id)
         elif platform == "twitter":
@@ -27,12 +29,11 @@ def download_video(args):
     return video
 
 
-def run():
+def run(db, user):
     # We create a Pool (of Threads, not processes, since, again, this task is I/O-bound anyways)
-    conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
+    conn = psycopg2.connect(database=db, user=user)
     c = conn.cursor()
-    # TODO or Player Config: 429, or Player Config: 403 when doing this for twitter
-    c.execute("""SELECT id, platform FROM videos WHERE crawling_status='Not Crawled' AND platform = 'youtube'""") # AND platform='twitter'
+    c.execute("""SELECT id, platform FROM videos WHERE crawling_status='Not Crawled'""")
     videos = c.fetchall()#[:10000]
     shuffle(videos)
 
@@ -52,5 +53,21 @@ def run():
     pool.join()
 
 
+import argparse
+
+parser = argparse.ArgumentParser(description='Crawls articles in the articles table of a specified database.')
+
+parser.add_argument('--db', help='Database containing the videos. Default: "gdelt_social_video"', type=str,
+                    default="gdelt_social_video")
+parser.add_argument('--user', nargs='+', help='Username for the database. No password. Default: "postgres"', type=str,
+                    default="postgres")
+
+args = parser.parse_args()
+
 if __name__ == "__main__":
-    run()
+    try:
+        run(args.db, args.user)
+    except KeyboardInterrupt:
+        print("Interrupted by user. To resume, run again.")
+        pass
+

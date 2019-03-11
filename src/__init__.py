@@ -1,9 +1,5 @@
 import os
 
-# TODO remove
-# Local: "/Users/claasmeiners/data/"
-# External drive: "/Volumes/DeskDrive/data/"
-
 if "DATA_PATH" not in os.environ:
     os.environ["DATA_PATH"] = "/mnt/claas/data/"
 

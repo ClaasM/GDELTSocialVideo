@@ -3,10 +3,8 @@ Crawls all articles and saves which articles were successfully crawled.
 Saves each found embedded youtube or facebook video and twitter tweets to the database.
 Since crawling is I/O bound anyways, readability was prioritized over speed.
 Anything else is nonsense in Python anyways.
-
-
-TODO make this also insert the IDs s.t. that can be our unique key
 """
+
 from multiprocessing import Pool
 
 import psycopg2
@@ -19,7 +17,7 @@ from bs4 import BeautifulSoup
 from src.data.websites import website as website_helper
 from src.visualization.console import StatusVisualization
 
-''' Some intialization TODO use the separating comments from the BA '''
+''' Some intialization '''
 
 minifier = htmlmin.Minifier(remove_comments=True, remove_all_empty_space=True, reduce_boolean_attributes=True,
                             remove_empty_space=True)
@@ -48,8 +46,8 @@ def crawl_article(article):
     return index, status, videos
 
 
-def run():
-    conn = psycopg2.connect(database="gdelt_social_video", user="postgres")
+def run(db, user):
+    conn = psycopg2.connect(database=db, user=user)
     c = conn.cursor()
     # Only crawl articles that have not yet been crawled
     c.execute("SELECT source_url, source_name FROM articles WHERE crawling_status<>'Success'")
@@ -79,5 +77,20 @@ def run():
             crawling_progress.inc(1)
 
 
+import argparse
+
+parser = argparse.ArgumentParser(description='Crawls articles in the articles table of a specified database.')
+
+parser.add_argument('--db', help='Database containing the article URLs. Default: "gdelt_social_video"', type=str,
+                    default="gdelt_social_video")
+parser.add_argument('--user', nargs='+', help='Username for the database. No password. Default: "postgres"', type=str,
+                    default="postgres")
+
+args = parser.parse_args()
+
 if __name__ == "__main__":
-    run()
+    try:
+        run(args.db, args.user)
+    except KeyboardInterrupt:
+        print("Interrupted by user. To resume, run again.")
+        pass

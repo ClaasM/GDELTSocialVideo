@@ -12,7 +12,6 @@ This is not using any foreign keys on mentions and events because:
 
 -- TABLES
 
--- TODO this whole table might not be necessary
 CREATE TABLE IF NOT EXISTS events (-- They are called "export" in the GDELT dataset, but events makes more sense
   -- Event ID and date attributes
   global_event_id          BIGINT PRIMARY KEY NOT NULL,
@@ -110,7 +109,6 @@ CREATE TABLE IF NOT EXISTS articles (
 
 -- Join table with some additional required information
 CREATE TABLE IF NOT EXISTS article_videos (
-  -- TODO delete unused columns
   source_url      TEXT NOT NULL,
   source_name     TEXT NOT NULL,
   platform        TEXT NOT NULL,
